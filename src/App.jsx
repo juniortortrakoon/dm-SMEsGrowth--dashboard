@@ -184,9 +184,19 @@ export default function HotelDMRadarDashboard() {
 
   const roadshowLabel = (d) => (d.roadshow === 1 ? 'เข้าร่วม Roadshow' : 'ไม่เข้าร่วม Roadshow');
 
+  // Options list reflects ALL currently active filters except tsic2 itself, so the
+  // dropdown never shows a subcategory that has zero companies left under the
+  // current province / size / roadshow selection.
   const tsic2Options = useMemo(() => {
-    return uniq(RAW_DATA.filter((d) => tsic1Sel.includes(d.tsic1)).map((d) => d.tsic2)).sort();
-  }, [tsic1Sel]);
+    return uniq(
+      RAW_DATA.filter((d) =>
+        tsic1Sel.includes(d.tsic1) &&
+        provinceSel.includes(d.province) &&
+        sizeSel.includes(d.size) &&
+        roadshowSel.includes(roadshowLabel(d))
+      ).map((d) => d.tsic2)
+    ).sort();
+  }, [tsic1Sel, provinceSel, sizeSel, roadshowSel]);
 
   const effectiveTsic2Sel = useMemo(() => {
     const stillValid = tsic2Sel.filter((t) => tsic2Options.includes(t));
@@ -205,29 +215,47 @@ export default function HotelDMRadarDashboard() {
 
   const roadshowCountInFiltered = useMemo(() => filtered.filter((d) => d.roadshow === 1).length, [filtered]);
 
+  // Cross-filtered counts (Power-BI style): each dimension's chip counts reflect ALL
+  // OTHER currently active filters combined, so the numbers always match what you'd
+  // actually get if you picked that chip given everything else that's selected.
   const provinceCounts = useMemo(() => {
     const m = {};
-    RAW_DATA.filter((d) => tsic1Sel.includes(d.tsic1)).forEach((d) => { m[d.province] = (m[d.province] || 0) + 1; });
+    RAW_DATA.filter((d) =>
+      tsic1Sel.includes(d.tsic1) && sizeSel.includes(d.size) &&
+      effectiveTsic2Sel.includes(d.tsic2) && roadshowSel.includes(roadshowLabel(d))
+    ).forEach((d) => { m[d.province] = (m[d.province] || 0) + 1; });
     return m;
-  }, [tsic1Sel]);
+  }, [tsic1Sel, sizeSel, effectiveTsic2Sel, roadshowSel]);
   const tsic1Counts = useMemo(() => {
     const m = {};
-    RAW_DATA.filter((d) => provinceSel.includes(d.province)).forEach((d) => { m[d.tsic1] = (m[d.tsic1] || 0) + 1; });
+    RAW_DATA.filter((d) =>
+      provinceSel.includes(d.province) && sizeSel.includes(d.size) &&
+      effectiveTsic2Sel.includes(d.tsic2) && roadshowSel.includes(roadshowLabel(d))
+    ).forEach((d) => { m[d.tsic1] = (m[d.tsic1] || 0) + 1; });
     return m;
-  }, [provinceSel]);
+  }, [provinceSel, sizeSel, effectiveTsic2Sel, roadshowSel]);
   const sizeCounts = useMemo(() => {
     const m = {};
-    RAW_DATA.filter((d) => provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) && effectiveTsic2Sel.includes(d.tsic2)).forEach((d) => { m[d.size] = (m[d.size] || 0) + 1; });
+    RAW_DATA.filter((d) =>
+      provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) &&
+      effectiveTsic2Sel.includes(d.tsic2) && roadshowSel.includes(roadshowLabel(d))
+    ).forEach((d) => { m[d.size] = (m[d.size] || 0) + 1; });
     return m;
-  }, [provinceSel, tsic1Sel, effectiveTsic2Sel]);
+  }, [provinceSel, tsic1Sel, effectiveTsic2Sel, roadshowSel]);
   const tsic2Counts = useMemo(() => {
     const m = {};
-    RAW_DATA.filter((d) => provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) && sizeSel.includes(d.size)).forEach((d) => { m[d.tsic2] = (m[d.tsic2] || 0) + 1; });
+    RAW_DATA.filter((d) =>
+      provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) &&
+      sizeSel.includes(d.size) && roadshowSel.includes(roadshowLabel(d))
+    ).forEach((d) => { m[d.tsic2] = (m[d.tsic2] || 0) + 1; });
     return m;
-  }, [provinceSel, tsic1Sel, sizeSel]);
+  }, [provinceSel, tsic1Sel, sizeSel, roadshowSel]);
   const roadshowCounts = useMemo(() => {
     const m = {};
-    RAW_DATA.filter((d) => provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) && sizeSel.includes(d.size) && effectiveTsic2Sel.includes(d.tsic2)).forEach((d) => {
+    RAW_DATA.filter((d) =>
+      provinceSel.includes(d.province) && tsic1Sel.includes(d.tsic1) &&
+      sizeSel.includes(d.size) && effectiveTsic2Sel.includes(d.tsic2)
+    ).forEach((d) => {
       const lbl = roadshowLabel(d);
       m[lbl] = (m[lbl] || 0) + 1;
     });
@@ -257,6 +285,41 @@ export default function HotelDMRadarDashboard() {
     });
     return avg;
   }, [peerGroup]);
+
+  // Structured summary of exactly which filter values are currently active, so the
+  // group overview card can visually highlight the dimensions that are actually
+  // narrowed down (bold/navy) versus left at "ทั้งหมด" (muted gray).
+  const filterSummaryParts = useMemo(() => {
+    const allTsic1 = uniq(RAW_DATA.map((d) => d.tsic1));
+    const allSizes = uniq(RAW_DATA.map((d) => d.size));
+    const parts = [];
+
+    parts.push({
+      label: 'จังหวัด',
+      value: provinceSel.length === ALL_PROVINCES.length ? 'ทั้งหมด' : provinceSel.join(', '),
+      active: provinceSel.length !== ALL_PROVINCES.length,
+    });
+    parts.push({
+      label: 'อุตสาหกรรมหมวดใหญ่',
+      value: tsic1Sel.length === allTsic1.length ? 'ทั้งหมด' : tsic1Sel.join(', '),
+      active: tsic1Sel.length !== allTsic1.length,
+    });
+    if (effectiveTsic2Sel.length !== tsic2Options.length) {
+      parts.push({ label: 'อุตสาหกรรมหมวดย่อย', value: effectiveTsic2Sel.join(', '), active: true });
+    }
+    parts.push({
+      label: 'ขนาดธุรกิจ',
+      value: sizeSel.length === allSizes.length ? 'ทั้งหมด' : sizeSel.join(', '),
+      active: sizeSel.length !== allSizes.length,
+    });
+    parts.push({
+      label: 'Roadshow',
+      value: roadshowSel.length === ROADSHOW_OPTIONS.length ? 'ทั้งหมด' : roadshowSel.join(', '),
+      active: roadshowSel.length !== ROADSHOW_OPTIONS.length,
+    });
+
+    return parts;
+  }, [provinceSel, tsic1Sel, sizeSel, roadshowSel, effectiveTsic2Sel, tsic2Options]);
 
   // Overview stats for the WHOLE currently filtered group (all slicers, both industries if both checked)
   const groupOverview = useMemo(() => {
@@ -378,14 +441,14 @@ export default function HotelDMRadarDashboard() {
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px 28px', marginBottom: 14 }}>
           <SlicerGroup title="จังหวัด" options={ALL_PROVINCES} selected={provinceSel} onToggle={(v) => toggleIsolate(setProvinceSel, provinceSel, v, ALL_PROVINCES)} onShowAll={() => setProvinceSel(ALL_PROVINCES)} counts={provinceCounts} />
-          <SlicerGroup title="อุตสาหกรรมหมวดใหญ่ (4.1)" options={uniq(RAW_DATA.map((d) => d.tsic1))} selected={tsic1Sel} onToggle={(v) => toggleIsolate(setTsic1Sel, tsic1Sel, v, uniq(RAW_DATA.map((d) => d.tsic1)))} onShowAll={() => setTsic1Sel(uniq(RAW_DATA.map((d) => d.tsic1)))} counts={tsic1Counts} />
+          <SlicerGroup title="อุตสาหกรรมหมวดใหญ่" options={uniq(RAW_DATA.map((d) => d.tsic1))} selected={tsic1Sel} onToggle={(v) => toggleIsolate(setTsic1Sel, tsic1Sel, v, uniq(RAW_DATA.map((d) => d.tsic1)))} onShowAll={() => setTsic1Sel(uniq(RAW_DATA.map((d) => d.tsic1)))} counts={tsic1Counts} />
           <SlicerGroup title="ขนาดธุรกิจ" options={uniq(RAW_DATA.map((d) => d.size))} selected={sizeSel} onToggle={(v) => toggleIsolate(setSizeSel, sizeSel, v, uniq(RAW_DATA.map((d) => d.size)))} onShowAll={() => setSizeSel(uniq(RAW_DATA.map((d) => d.size)))} counts={sizeCounts} />
           <SlicerGroup title="โครงการ SMEs Growth Roadshow" options={ROADSHOW_OPTIONS} selected={roadshowSel} onToggle={(v) => toggleIsolate(setRoadshowSel, roadshowSel, v, ROADSHOW_OPTIONS)} onShowAll={() => setRoadshowSel(ROADSHOW_OPTIONS)} counts={roadshowCounts} />
         </div>
 
         <div style={{ paddingTop: 14, borderTop: '1px solid #F0F1FA' }}>
           <MultiSelectDropdown
-            title="อุตสาหกรรมหมวดย่อย (4.2)"
+            title="อุตสาหกรรมหมวดย่อย"
             options={tsic2Options}
             selected={effectiveTsic2Sel}
             onToggle={(v) => toggleMulti(setTsic2Sel, effectiveTsic2Sel, v)}
@@ -485,83 +548,105 @@ export default function HotelDMRadarDashboard() {
               </ResponsiveContainer>
             </div>
 
-            {/* Score snapshot card */}
-            <div style={{ flex: '1 1 320px', background: '#FFFFFF', borderRadius: 14, padding: 20, boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7', display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 8 }}>
-                Score Snapshot (0–4)
-              </div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-                {LEVEL_RANGES.map((lvl) => {
-                  const style = TRANSITION_COLORS[lvl.label] || TRANSITION_COLORS['Digital Follower'];
-                  return (
-                    <span key={lvl.label} style={{
-                      fontSize: 10.5, fontWeight: 600, padding: '3px 9px', borderRadius: 999,
-                      background: style.bg, color: style.text,
-                    }}>
-                      {lvl.label} {lvl.range}
-                    </span>
-                  );
-                })}
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 52px 52px 84px', fontSize: 10.5, fontWeight: 700, color: '#8993BC', textTransform: 'uppercase', letterSpacing: '0.03em', paddingBottom: 6, borderBottom: '1px solid #E6E9F7' }}>
-                  <span>Dimension</span><span style={{ textAlign: 'right' }}>บริษัท</span><span style={{ textAlign: 'right' }}>ค่าเฉลี่ย</span><span style={{ textAlign: 'right' }}>เทียบ</span>
+            {/* Right column: Score snapshot card + Group overview card, same width, stacked */}
+            <div style={{ flex: '1 1 320px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+              {/* Score snapshot card */}
+              <div style={{ background: '#FFFFFF', borderRadius: 14, padding: 20, boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7', display: 'flex', flexDirection: 'column' }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 8 }}>
+                  คะแนนของบริษัทนี้ (0–4)
                 </div>
-                {DIMS.map((dim) => {
-                  const cVal = selectedCompany[dim.key];
-                  const pVal = peerAvg[dim.key];
-                  const diff = Math.round((cVal - pVal) * 100) / 100;
-                  const up = diff > 0.05, down = diff < -0.05;
-                  return (
-                    <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '1fr 52px 52px 84px', fontSize: 12.5, padding: '8px 0', borderBottom: '1px solid #F4F5FB', alignItems: 'center' }}>
-                      <span style={{ fontWeight: 600, color: '#242C4D' }}>{dim.label}</span>
-                      <span style={{ textAlign: 'right', fontWeight: 700, color: '#192594' }}>{cVal.toFixed(2)}</span>
-                      <span style={{ textAlign: 'right', color: '#3FA9DC' }}>{pVal.toFixed(2)}</span>
-                      <span style={{ textAlign: 'right', fontWeight: 700, fontSize: 11.5, color: up ? '#0F7A5C' : down ? '#B23A4A' : '#8993BC' }}>
-                        {up ? '▲ สูงกว่า' : down ? '▼ ต่ำกว่า' : '≈ เท่ากับ'}
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+                  {LEVEL_RANGES.map((lvl) => {
+                    const style = TRANSITION_COLORS[lvl.label] || TRANSITION_COLORS['Digital Follower'];
+                    return (
+                      <span key={lvl.label} style={{
+                        fontSize: 10.5, fontWeight: 600, padding: '3px 9px', borderRadius: 999,
+                        background: style.bg, color: style.text,
+                      }}>
+                        {lvl.label} {lvl.range}
                       </span>
-                    </div>
-                  );
-                })}
-              </div>
-
-              <div style={{
-                marginTop: 16, padding: '14px 16px', borderRadius: 12,
-                background: SCORE_BOX_GRADIENTS[selectedCompany.transition] || SCORE_BOX_GRADIENTS['Digital Follower'],
-                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              }}>
-                <div>
-                  <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.75)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Overall Score (บริษัทนี้)</div>
-                  <div style={{ fontSize: 22, color: '#FFFFFF', fontWeight: 800 }}>{selectedCompany.overall.toFixed(2)} <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.75)' }}>/ 4.00</span></div>
+                    );
+                  })}
                 </div>
-                <span style={{ fontSize: 11.5, fontWeight: 700, padding: '6px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.2)', color: '#FFFFFF' }}>
-                  {selectedCompany.transition}
-                </span>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 52px 52px 84px', fontSize: 10.5, fontWeight: 700, color: '#8993BC', textTransform: 'uppercase', letterSpacing: '0.03em', paddingBottom: 6, borderBottom: '1px solid #E6E9F7' }}>
+                    <span>Dimension</span><span style={{ textAlign: 'right' }}>บริษัท</span><span style={{ textAlign: 'right' }}>ค่าเฉลี่ย</span><span style={{ textAlign: 'right' }}>เทียบ</span>
+                  </div>
+                  {DIMS.map((dim) => {
+                    const cVal = selectedCompany[dim.key];
+                    const pVal = peerAvg[dim.key];
+                    const diff = Math.round((cVal - pVal) * 100) / 100;
+                    const up = diff > 0, down = diff < 0;
+                    return (
+                      <div key={dim.key} style={{ display: 'grid', gridTemplateColumns: '1fr 52px 52px 84px', fontSize: 12.5, padding: '8px 0', borderBottom: '1px solid #F4F5FB', alignItems: 'center' }}>
+                        <span style={{ fontWeight: 600, color: '#242C4D' }}>{dim.label}</span>
+                        <span style={{ textAlign: 'right', fontWeight: 700, color: '#192594' }}>{cVal.toFixed(2)}</span>
+                        <span style={{ textAlign: 'right', color: '#3FA9DC' }}>{pVal.toFixed(2)}</span>
+                        <span style={{ textAlign: 'right', fontWeight: 700, fontSize: 11.5, color: up ? '#0F7A5C' : down ? '#B23A4A' : '#8993BC' }}>
+                          {up ? '▲ สูงกว่า' : down ? '▼ ต่ำกว่า' : '≈ เท่ากับ'}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                <div style={{
+                  marginTop: 16, padding: '14px 16px', borderRadius: 12,
+                  background: SCORE_BOX_GRADIENTS[selectedCompany.transition] || SCORE_BOX_GRADIENTS['Digital Follower'],
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                }}>
+                  <div>
+                    <div style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.75)', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Overall Score (บริษัทนี้)</div>
+                    <div style={{ fontSize: 22, color: '#FFFFFF', fontWeight: 800 }}>{selectedCompany.overall.toFixed(2)} <span style={{ fontSize: 12, fontWeight: 500, color: 'rgba(255,255,255,0.75)' }}>/ 4.00</span></div>
+                  </div>
+                  <span style={{ fontSize: 11.5, fontWeight: 700, padding: '6px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.2)', color: '#FFFFFF' }}>
+                    {selectedCompany.transition}
+                  </span>
+                </div>
               </div>
 
+              {/* Group overview card - same width as Score Snapshot, stacked below it */}
               {groupOverview && (
-                <div style={{ marginTop: 12, padding: '14px 16px', borderRadius: 12, background: '#F4F5FB', border: '1px dashed #D9DEF0' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
-                    <div style={{ fontSize: 10.5, color: '#8993BC', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      ภาพรวมคะแนนกลุ่มที่กรองอยู่ ({groupOverview.n} ราย)
-                    </div>
+                <div style={{
+                  background: '#FFFFFF', borderRadius: 14, padding: 20,
+                  boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
+                }}>
+                  <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 2 }}>
+                    ภาพรวมคะแนนกลุ่มที่กรองอยู่
                   </div>
-                  <div style={{ display: 'flex', gap: 18, marginBottom: 8, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 12, display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '4px 6px' }}>
+                    <span>รวม {groupOverview.n} บริษัท:</span>
+                    {filterSummaryParts.map((p) => (
+                      <span
+                        key={p.label}
+                        style={{
+                          fontSize: 11, fontWeight: p.active ? 700 : 500,
+                          padding: '2px 9px', borderRadius: 999,
+                          background: p.active ? '#E4E9FA' : '#F4F5FB',
+                          color: p.active ? '#192594' : '#A3ABCF',
+                          border: p.active ? 'none' : '1px dashed #D9DEF0',
+                        }}
+                      >
+                        {p.label}: {p.value}
+                      </span>
+                    ))}
+                  </div>
+                  <div style={{ display: 'flex', gap: 24, marginBottom: 12, flexWrap: 'wrap' }}>
                     <div>
-                      <div style={{ fontSize: 20, color: '#192594', fontWeight: 800 }}>
-                        {groupOverview.avgOverall.toFixed(2)} <span style={{ fontSize: 11, fontWeight: 500, color: '#8993BC' }}>/ 4.00 คะแนนเฉลี่ย</span>
+                      <div style={{ fontSize: 22, color: '#192594', fontWeight: 800 }}>
+                        {groupOverview.avgOverall.toFixed(2)} <span style={{ fontSize: 11.5, fontWeight: 500, color: '#8993BC' }}>/ 4.00 คะแนนเฉลี่ย</span>
                       </div>
                     </div>
                     <div>
-                      <div style={{ fontSize: 20, color: '#1E7A3E', fontWeight: 800 }}>
-                        {formatRevenue(groupOverview.totalRevenue)} <span style={{ fontSize: 11, fontWeight: 500, color: '#8993BC' }}>รายได้รวมทั้งกลุ่ม (ปี 2568)</span>
+                      <div style={{ fontSize: 22, color: '#1E7A3E', fontWeight: 800 }}>
+                        {formatRevenue(groupOverview.totalRevenue)} <span style={{ fontSize: 11.5, fontWeight: 500, color: '#8993BC' }}>รายได้รวมทั้งกลุ่ม (ปี 2568)</span>
                       </div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
                     {Object.entries(groupOverview.transitionCounts).map(([lvl, cnt]) => (
                       <span key={lvl} style={{
-                        fontSize: 10.5, fontWeight: 700, padding: '3px 9px', borderRadius: 999,
+                        fontSize: 11, fontWeight: 700, padding: '4px 11px', borderRadius: 999,
                         background: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).bg,
                         color: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).text,
                       }}>
@@ -578,7 +663,7 @@ export default function HotelDMRadarDashboard() {
 
       <div style={{ padding: '4px 28px 24px', fontSize: 11, color: '#A3ABCF', display: 'flex', alignItems: 'center', gap: 8 }}>
         <img src={LOGO_SRC} alt="ETDA" style={{ height: 14, opacity: 0.6 }} />
-        แหล่งข้อมูล: ETDA SMEs e-Commerce Survey 2569 · กลุ่มอุตสาหกรรมหมวดใหญ่ "ที่พักแรมและบริการด้านอาหาร" และ "การผลิต" (TSIC Level 1) · n = {RAW_DATA.length} บริษัท จาก 4 จังหวัดภาคใต้ที่กำหนด (ยะลา/สงขลา/กระบี่/นครศรีธรรมราช) · ★ = เข้าร่วมโครงการ SMEs Growth Roadshow · เส้น "ค่าเฉลี่ยอุตสาหกรรมเดียวกัน" คำนวณจากทุกบริษัทในอุตสาหกรรมหมวดใหญ่เดียวกันเสมอ (ค่าคงที่ ไม่ปรับตาม slicer) ส่วนกล่อง "ภาพรวมคะแนนกลุ่มที่กรองอยู่" จะเปลี่ยนตามตัวกรองที่เลือก · ตัวเลขรายได้เป็นรายได้รวมปีบัญชี 2568 ที่ใช้ประกอบการสำรวจ e-Commerce ปี 2569
+        แหล่งข้อมูล: ETDA e-Commerce Survey 2569 · กลุ่มอุตสาหกรรมหมวดใหญ่ "ที่พักแรมและบริการด้านอาหาร" และ "การผลิต" (TSIC Level 1) · n = {RAW_DATA.length} บริษัท จาก 4 จังหวัดภาคใต้ที่กำหนด (ยะลา/สงขลา/กระบี่/นครศรีธรรมราช) · ★ = เข้าร่วมโครงการ SMEs Growth Roadshow · เส้น "ค่าเฉลี่ยอุตสาหกรรมเดียวกัน" คำนวณจากทุกบริษัทในอุตสาหกรรมหมวดใหญ่เดียวกันเสมอ (ค่าคงที่ ไม่ปรับตาม slicer) ส่วนกล่อง "ภาพรวมคะแนนกลุ่มที่กรองอยู่" จะเปลี่ยนตามตัวกรองที่เลือก · ตัวเลขรายได้เป็นรายได้รวมปีบัญชี 2568 ที่ใช้ประกอบการสำรวจ e-Commerce ปี 2569
       </div>
     </div>
   );
