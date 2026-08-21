@@ -719,7 +719,7 @@ export default function HotelDMRadarDashboard() {
               </ResponsiveContainer>
               <div style={{ fontSize: 11.5, color: '#42507A', marginTop: 4, marginBottom: 8, lineHeight: 1.6 }}>
                 <div><b style={{ color: '#3FA9DC' }}>ค่าเฉลี่ยอุตสาหกรรมเดียวกัน (ฟ้า)</b> คำนวณจากทุกบริษัทในกลุ่ม "{selectedCompany.tsic1}" ({peerGroup.length} ราย, 4 จังหวัดภาคใต้)</div>
-                <div><b style={{ color: '#D6334A' }}>ค่าเฉลี่ยทั่วประเทศ (แดง)</b> คำนวณจากบริษัทกลุ่มเดียวกันทั้งประเทศ ({nationalAvg ? formatNumber(nationalAvg.n) : 0} ราย) — ทั้งสองเส้นเป็นค่าคงที่ ไม่เปลี่ยนตามตัวกรอง</div>
+                <div><b style={{ color: '#D6334A' }}>ค่าเฉลี่ยอุตสาหกรรมเดียวกันทั่วประเทศ (แดง)</b> คำนวณจากทุกบริษัทในกลุ่ม "{selectedCompany.tsic1}" ทั้งประเทศ ({nationalAvg ? formatNumber(nationalAvg.n) : 0} ราย) — ทั้งสองเส้นเป็นค่าคงที่ ไม่เปลี่ยนตามตัวกรอง</div>
               </div>
 
               {/* Rank / percentile within peer group */}
@@ -851,7 +851,7 @@ export default function HotelDMRadarDashboard() {
                     <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#D6334A', flexShrink: 0 }}></span>
                     <b>ประเทศ</b> = ค่าเฉลี่ยอุตสาหกรรมเดียวกัน ทั่วประเทศไทย
                   </div>
-                  <div style={{ fontSize: 11.5, color: '#8993BC' }}>
+                  <div style={{ fontSize: 11.5, color: '#42507A', paddingTop: 2, borderTop: '1px dashed #D9DEF0', marginTop: 2 }}>
                     * คอลัมน์ <b>เทียบ</b> คือ "คะแนนของบริษัทนี้" เทียบกับ "ค่าเฉลี่ยภาคใต้" เท่านั้น (ไม่ได้เทียบกับค่าเฉลี่ยทั่วประเทศ)
                   </div>
                 </div>
