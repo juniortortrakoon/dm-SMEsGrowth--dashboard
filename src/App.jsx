@@ -1683,13 +1683,24 @@ export default function HotelDMRadarDashboard() {
     indexed.sort((a, b) => a.score - b.score);
     const priorityActions = indexed.slice(0, 2).map((item) => bullets[item.idx]).filter(Boolean);
 
+    // Same personalization applied to the STRENGTH dimension — even a
+    // dimension that's already ahead of peer usually has one specific
+    // question dragging it down slightly; developing that is the most
+    // direct path to the next maturity level in that dimension.
+    const bestQKey = 'q_' + best.key;
+    const bestQScores = selectedCompany[bestQKey] || [];
+    const bestBullets = QUESTIONS_BY_DIM[best.key] || [];
+    const bestIndexed = bestQScores.map((score, idx) => ({ score, idx }));
+    bestIndexed.sort((a, b) => a.score - b.score);
+    const strengthActions = bestIndexed.slice(0, 2).map((item) => bestBullets[item.idx]).filter(Boolean);
+
     // Whether the "worst" dimension is an ACTUAL gap (below peer) — a company
     // that beats peer on every dimension has no real weakness relative to
     // peer, even though one dimension is its "least strong" one. Mislabeling
     // that as a gap/priority-to-fix is misleading.
     const hasGap = worst.diff < 0;
 
-    return { best, worst, priorityActions, hasGap };
+    return { best, worst, priorityActions, strengthActions, hasGap };
   }, [selectedCompany, peerAvg, includeAI]);
 
   // Rank and percentile of the selected company's Overall Score within its peer group
@@ -1986,7 +1997,7 @@ export default function HotelDMRadarDashboard() {
                     }}>
                       {gapInsight.best.diff > 0 ? '💪 จุดแข็ง' : '🔹 ด้านที่ใกล้เคียง Peer ที่สุด'}
                     </div>
-                    <div style={{ fontSize: 12.5, color: '#242C4D' }}>
+                    <div style={{ fontSize: 12.5, color: '#242C4D', marginBottom: gapInsight.strengthActions.length ? 8 : 0 }}>
                       {gapInsight.best.diff > 0 ? (
                         <><b>{gapInsight.best.label}</b> สูงกว่า Peer {gapInsight.best.diff.toFixed(2)} แต้ม</>
                       ) : gapInsight.best.diff === 0 ? (
@@ -1995,6 +2006,19 @@ export default function HotelDMRadarDashboard() {
                         <><b>{gapInsight.best.label}</b> ต่ำกว่า Peer เพียง {Math.abs(gapInsight.best.diff).toFixed(2)} แต้ม (ยังไม่ถึง Peer แต่ใกล้ที่สุด)</>
                       )}
                     </div>
+                    {gapInsight.strengthActions.length > 0 && (
+                      <div style={{ paddingTop: 8, borderTop: gapInsight.best.diff > 0 ? '1px dashed #C9E9CF' : '1px dashed #E6E9F7' }}>
+                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', marginBottom: 4 }}>
+                          🚀 ต่อยอดสู่ระดับที่สูงขึ้น
+                        </div>
+                        {gapInsight.strengthActions.map((action, i) => (
+                          <div key={i} style={{ fontSize: 12, color: '#3A2A24', display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 3 }}>
+                            <span style={{ color: '#1E7A3E', flexShrink: 0 }}>✓</span>
+                            <span>{action}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   <div style={{
                     padding: '10px 14px', borderRadius: 10,
