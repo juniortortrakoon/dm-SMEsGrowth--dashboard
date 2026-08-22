@@ -474,10 +474,41 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
     dims: p.slice(6, 11),
   }));
 
+  // Insight text — how much score varies among companies with SIMILAR
+  // revenue. Uses equal-WIDTH bins in LOG space (true "same order of
+  // magnitude" bands), not equal-COUNT bins by sorted position — the latter
+  // produces misleading bins like "5–1,790,000 บาท" on this heavily skewed
+  // data, since most companies cluster at the low end.
+  const scatterInsight = (() => {
+    if (scatterChartData.length < 10) return null;
+    const logs = scatterChartData.map((d) => Math.log10(d.revenue));
+    const logMin = Math.min(...logs), logMax = Math.max(...logs);
+    const numBins = 20;
+    const binWidth = (logMax - logMin) / numBins || 1;
+    let widest = null;
+    for (let b = 0; b < numBins; b++) {
+      const lo = logMin + b * binWidth, hi = lo + binWidth;
+      const bucket = scatterChartData.filter((d, i) => logs[i] >= lo && (b === numBins - 1 ? logs[i] <= hi : logs[i] < hi));
+      if (bucket.length < 5) continue;
+      const scores = bucket.map((d) => d.score);
+      const range = Math.max(...scores) - Math.min(...scores);
+      if (!widest || range > widest.range) {
+        widest = {
+          range,
+          minRev: Math.min(...bucket.map((d) => d.revenue)),
+          maxRev: Math.max(...bucket.map((d) => d.revenue)),
+        };
+      }
+    }
+    return widest;
+  })();
+
   // Pearson correlation between log10(revenue) and score — revenue is used in
   // log form since that's the scale the chart itself displays on, and raw
   // revenue is so skewed that a linear-scale correlation would be dominated
-  // by a handful of extreme outliers.
+  // by a handful of extreme outliers. The trend line below is fit on the
+  // SAME log10(revenue)-vs-score basis, so the reported r and the drawn line
+  // are always consistent with each other.
   function pearsonR(xs, ys) {
     const n = xs.length;
     if (n < 2) return { r: 0, slope: 0, intercept: 0 };
@@ -504,48 +535,27 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
     Math.abs(scatterReg.r) < 0.7 ? 'ความสัมพันธ์ค่อนข้างสูง' : 'ความสัมพันธ์สูง';
 
   // Trend line: two endpoints spanning the actual revenue range in view,
-  // predicted from the regression above (clamped to the 0-4 score scale).
+  // predicted from the SAME log10(revenue)-based regression above (clamped
+  // to the 0-4 score scale).
+  const scatterPredict = (rev) => {
+    const y = scatterReg.slope * Math.log10(rev) + scatterReg.intercept;
+    return Math.max(0, Math.min(4, y));
+  };
   const scatterTrendData = (() => {
     if (scatterChartData.length < 2) return [];
     const minRev = Math.min(...scatterChartData.map((d) => d.revenue));
     const maxRev = Math.max(...scatterChartData.map((d) => d.revenue));
-    const predict = (rev) => {
-      const y = scatterReg.slope * Math.log10(rev) + scatterReg.intercept;
-      return Math.max(0, Math.min(4, y));
-    };
     return [
-      { revenue: minRev, trend: predict(minRev) },
-      { revenue: maxRev, trend: predict(maxRev) },
+      { revenue: minRev, trend: scatterPredict(minRev) },
+      { revenue: maxRev, trend: scatterPredict(maxRev) },
     ];
   })();
 
-  // Insight text — how much score varies among companies with SIMILAR
-  // revenue (quintile buckets by revenue), to show alongside the overall
-  // correlation.
-  const scatterInsight = (() => {
-    if (scatterChartData.length < 10) return null;
-    const sorted = [...scatterChartData].sort((a, b) => a.revenue - b.revenue);
-    const bucketSize = Math.ceil(sorted.length / 5);
-    let widest = null;
-    for (let i = 0; i < sorted.length; i += bucketSize) {
-      const bucket = sorted.slice(i, i + bucketSize);
-      if (bucket.length < 3) continue;
-      const scores = bucket.map((d) => d.score);
-      const range = Math.max(...scores) - Math.min(...scores);
-      if (!widest || range > widest.range) {
-        widest = {
-          range,
-          minRev: Math.min(...bucket.map((d) => d.revenue)),
-          maxRev: Math.max(...bucket.map((d) => d.revenue)),
-        };
-      }
-    }
-    return widest;
-  })();
-
-  // Auto-detected quadrants — thresholds are the 25th/75th percentile of the
-  // CURRENTLY FILTERED data itself (not fixed numbers), so "high" and "low"
-  // always mean high/low relative to the group being viewed.
+  // Auto-detected outliers relative to the TREND, not just high/low revenue
+  // or score independently — "who doesn't follow the trend line". Residual =
+  // actual score minus the score the regression predicts for that revenue
+  // level. Thresholds are the 10th/90th percentile of residuals in the
+  // CURRENTLY FILTERED data (data-driven, not a fixed cutoff).
   function percentileOf(sortedArr, p) {
     if (sortedArr.length === 0) return 0;
     const idx = (sortedArr.length - 1) * p;
@@ -555,15 +565,23 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
   }
   const scatterQuadrants = (() => {
     if (scatterChartData.length < 10) return null;
-    const revSorted = [...scatterChartData].map((d) => d.revenue).sort((a, b) => a - b);
-    const scoreSorted = [...scatterChartData].map((d) => d.score).sort((a, b) => a - b);
-    const p25Rev = percentileOf(revSorted, 0.25);
-    const p75Rev = percentileOf(revSorted, 0.75);
-    const p25Score = percentileOf(scoreSorted, 0.25);
-    const p75Score = percentileOf(scoreSorted, 0.75);
-    const highRevLowMaturity = scatterChartData.filter((d) => d.revenue >= p75Rev && d.score <= p25Score);
-    const highMaturityLowRev = scatterChartData.filter((d) => d.score >= p75Score && d.revenue <= p25Rev);
-    return { highRevLowMaturity, highMaturityLowRev, p25Rev, p75Rev, p25Score, p75Score };
+    const withResidual = scatterChartData.map((d) => ({ ...d, residual: d.score - scatterPredict(d.revenue) }));
+    const residualsSorted = withResidual.map((d) => d.residual).sort((a, b) => a - b);
+    const revSorted = withResidual.map((d) => d.revenue).sort((a, b) => a - b);
+    const p10Residual = percentileOf(residualsSorted, 0.10);
+    const p90Residual = percentileOf(residualsSorted, 0.90);
+    const medianRev = percentileOf(revSorted, 0.50);
+    // High Revenue × Low Maturity: revenue at/above the median AND notably
+    // underperforming what the trend predicts for that revenue level.
+    const highRevLowMaturity = withResidual
+      .filter((d) => d.revenue >= medianRev && d.residual <= p10Residual)
+      .sort((a, b) => a.residual - b.residual);
+    // Digital Overperformers: notably ABOVE what the trend predicts for
+    // their revenue level, regardless of whether that revenue is high or low.
+    const highMaturityLowRev = withResidual
+      .filter((d) => d.residual >= p90Residual)
+      .sort((a, b) => b.residual - a.residual);
+    return { highRevLowMaturity, highMaturityLowRev };
   })();
 
   // Highest/lowest dimension for whichever point is currently clicked/selected
@@ -912,29 +930,63 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           </div>
         )}
 
+        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginBottom: 16, fontSize: 11.5, color: '#8993BC' }}>
+          {['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'].map((lvl) => (
+            <span key={lvl} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 10, height: 10, borderRadius: 3, background: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).dot }}></span>
+              {lvl}
+            </span>
+          ))}
+        </div>
+
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          <div style={{ position: 'relative', flex: '0 0 auto' }}>
-            <svg viewBox={MAP_VIEWBOX} width="420" height="739" style={{ display: 'block' }}>
-              {PROVINCE_PATHS.map((p, i) => {
-                const d = mapRegionData[p.region];
-                const isHovered = hoveredRegion === p.region;
-                const fillColor = d ? interpolateColor((d.overall - mapColorScale.min) / (mapColorScale.range || 1)) : '#E4E6F0';
-                return (
-                  <path
-                    key={i}
-                    d={p.d}
-                    fill={fillColor}
-                    stroke="#FFFFFF"
-                    strokeWidth={isHovered ? 2 : 0.8}
-                    strokeLinejoin="round"
-                    opacity={hoveredRegion && !isHovered ? 0.5 : 1}
-                    style={{ cursor: 'pointer', transition: 'opacity 0.15s ease, stroke-width 0.15s ease' }}
-                    onMouseEnter={() => setHoveredRegion(p.region)}
-                    onMouseLeave={() => setHoveredRegion(null)}
-                  />
-                );
-              })}
-            </svg>
+          <div style={{ position: 'relative', flex: '1 1 320px', maxWidth: 420 }}>
+            <div style={{ width: '100%', aspectRatio: '1051 / 1849' }}>
+              <svg viewBox={MAP_VIEWBOX} width="100%" height="100%" style={{ display: 'block' }}>
+                <defs>
+                  <filter id="topRegionGlow" x="-50%" y="-50%" width="200%" height="200%">
+                    <feDropShadow dx="0" dy="0" stdDeviation="10" floodColor="#F4B942" floodOpacity="0.9" />
+                  </filter>
+                </defs>
+                {PROVINCE_PATHS.map((p, i) => {
+                  const d = mapRegionData[p.region];
+                  const isHovered = hoveredRegion === p.region;
+                  const isTopRegion = mapTop && p.region === mapTop[0];
+                  const fillColor = d
+                    ? (TRANSITION_COLORS[levelFromScore(d.overall)] || TRANSITION_COLORS['Digital Follower']).dot
+                    : '#E4E6F0';
+                  return (
+                    <path
+                      key={i}
+                      d={p.d}
+                      fill={fillColor}
+                      stroke={isTopRegion ? '#F4B942' : '#FFFFFF'}
+                      strokeWidth={isTopRegion ? 3.5 : (isHovered ? 2 : 0.8)}
+                      strokeLinejoin="round"
+                      opacity={hoveredRegion && !isHovered ? 0.5 : 1}
+                      filter={isTopRegion ? 'url(#topRegionGlow)' : undefined}
+                      style={{ cursor: 'pointer', transition: 'opacity 0.15s ease, stroke-width 0.15s ease' }}
+                      onMouseEnter={() => setHoveredRegion(p.region)}
+                      onMouseLeave={() => setHoveredRegion(null)}
+                    />
+                  );
+                })}
+              </svg>
+            </div>
+
+            {/* Floating badge calling out the #1 region — the map's glow
+                border shows WHERE it is, this badge confirms WHICH region and
+                its score without needing to compute a centroid on the SVG. */}
+            {mapTop && (
+              <div style={{
+                position: 'absolute', top: 10, left: 10, background: '#FFFFFF',
+                border: '1.5px solid #F4B942', borderRadius: 999, padding: '5px 12px',
+                boxShadow: '0 4px 12px rgba(244,185,66,0.35)', fontSize: 12, fontWeight: 700,
+                color: '#8A6A1A', display: 'flex', alignItems: 'center', gap: 5, pointerEvents: 'none',
+              }}>
+                🏆 {mapTop[0]} ({mapTop[1].overall.toFixed(2)})
+              </div>
+            )}
 
             {hoveredData && (
               <div style={{
@@ -986,7 +1038,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                     }}
                   >
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#B7BEDE', width: 16 }}>{i + 1}</span>
-                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: interpolateColor((d.overall - mapColorScale.min) / (mapColorScale.range || 1)), flexShrink: 0 }}></span>
+                    <span style={{ width: 10, height: 10, borderRadius: '50%', background: style.dot, flexShrink: 0 }}></span>
                     <span style={{ flex: 1, fontSize: 12.5, fontWeight: 600, color: '#242C4D' }}>{regionName}</span>
                     <span style={{ fontSize: 13, fontWeight: 800, color: '#192594' }}>{d.overall.toFixed(2)}</span>
                     <span style={{
@@ -1154,18 +1206,22 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         {/* Key message: correlation */}
         <div style={{
           display: 'inline-flex', alignItems: 'center', gap: 10, padding: '8px 16px', borderRadius: 10,
-          background: '#F4F5FB', marginBottom: 12,
+          background: '#F4F5FB', marginBottom: 6, flexWrap: 'wrap',
         }}>
           <span style={{ fontSize: 18, fontWeight: 800, color: '#192594' }}>r = {scatterReg.r.toFixed(2)}</span>
           <span style={{ fontSize: 12.5, fontWeight: 700, color: '#8993BC' }}>|</span>
           <span style={{ fontSize: 13, fontWeight: 600, color: '#42507A' }}>{scatterRLabel}</span>
         </div>
+        <div style={{ fontSize: 10.5, color: '#B7BEDE', marginBottom: 12 }}>
+          คำนวณจาก log₁₀(รายได้) เทียบกับคะแนน Digital Maturity — ฐานเดียวกับที่ใช้วาดเส้นแนวโน้มด้านล่าง จึงสอดคล้องกัน
+        </div>
 
-        {/* AI-style insight, 1-2 sentences, changes with filter */}
+        {/* AI-style insight, 1-2 sentences, changes with filter — leads with
+            the correlation finding itself rather than undercutting it */}
         <div style={{ fontSize: 12.5, color: '#5B4A42', lineHeight: 1.7, marginBottom: 16, padding: '10px 14px', background: '#FFF6F2', borderRadius: 10 }}>
-          รายได้สูงไม่ได้หมายความว่า Digital Maturity จะสูงตามเสมอไป ({scatterRLabel}ระหว่างรายได้กับคะแนน)
+          รายได้มีความสัมพันธ์กับ Digital Maturity{scatterRLabel} แต่ไม่ใช่ปัจจัยเดียวที่อธิบายความแตกต่าง
           {scatterInsight && (
-            <> ธุรกิจที่มีรายได้ใกล้เคียงกัน ({formatNumber(Math.round(scatterInsight.minRev))}–{formatNumber(Math.round(scatterInsight.maxRev))} บาท) ยังมีคะแนน Digital Maturity แตกต่างกันได้ถึง <b>{scatterInsight.range.toFixed(2)} แต้ม</b></>
+            <> ในกลุ่มธุรกิจที่มีรายได้อยู่ในช่วงเดียวกัน ({formatNumber(Math.round(scatterInsight.minRev))}–{formatNumber(Math.round(scatterInsight.maxRev))} บาท) ยังพบคะแนน Digital Maturity แตกต่างกันสูงสุดถึง <b>{scatterInsight.range.toFixed(2)} แต้ม</b></>
           )}
         </div>
 
@@ -1268,7 +1324,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               ))}
             </Scatter>
             <Line
-              data={scatterTrendData} dataKey="trend" stroke="#D6334A" strokeWidth={2.5}
+              data={scatterTrendData} dataKey="trend" stroke="#3A3A9E" strokeOpacity={0.65} strokeWidth={2.5}
               strokeDasharray="6 4" dot={false} legendType="none" isAnimationActive={false}
             />
           </ComposedChart>
@@ -1337,20 +1393,20 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
             </span>
           ))}
           <span style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-            <span style={{ width: 14, height: 0, borderTop: '2.5px dashed #D6334A', display: 'inline-block' }}></span>
+            <span style={{ width: 14, height: 0, borderTop: '2.5px dashed #3A3A9E', opacity: 0.65, display: 'inline-block' }}></span>
             เส้นแนวโน้ม (Trend line)
           </span>
         </div>
 
-        {/* Auto-detected quadrant groups */}
+        {/* Auto-detected outliers relative to the trend line */}
         {scatterQuadrants && (
           <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px dashed #E6E9F7', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
             <div style={{ background: '#FBEAEC', border: '1px solid #F0C9CE', borderRadius: 10, padding: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 4 }}>
-                ⚠️ รายได้สูง แต่ Maturity ต่ำ
+                🚩 High Revenue × Low Maturity
               </div>
               <div style={{ fontSize: 12, color: '#5B4A42', marginBottom: 8 }}>
-                รายได้ ≥ {formatNumber(Math.round(scatterQuadrants.p75Rev))} บาท (top 25%) และคะแนน ≤ {scatterQuadrants.p25Score.toFixed(2)} (bottom 25%)
+                รายได้อยู่ในกลุ่มสูง แต่คะแนน Digital Maturity ต่ำกว่าที่เส้นแนวโน้มคาดไว้อย่างชัดเจน
               </div>
               <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 6 }}>
                 {formatNumber(scatterQuadrants.highRevLowMaturity.length)} บริษัท
@@ -1358,17 +1414,17 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 {scatterQuadrants.highRevLowMaturity.slice(0, 3).map((d, i) => (
                   <div key={i} style={{ fontSize: 11.5, color: '#5B4A42' }}>
-                    <b>{d.name}</b> — {formatNumber(Math.round(d.revenue))} บาท, {d.score.toFixed(2)}
+                    <b>{d.name}</b> — {formatNumber(Math.round(d.revenue))} บาท, คะแนน {d.score.toFixed(2)} (ต่ำกว่าที่คาด {Math.abs(d.residual).toFixed(2)} แต้ม)
                   </div>
                 ))}
               </div>
             </div>
             <div style={{ background: '#EAF6EC', border: '1px solid #C9E9CF', borderRadius: 10, padding: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 4 }}>
-                🌟 Maturity เด่น แม้รายได้ยังไม่สูง
+                ⭐ Digital Overperformers
               </div>
               <div style={{ fontSize: 12, color: '#5B4A42', marginBottom: 8 }}>
-                คะแนน ≥ {scatterQuadrants.p75Score.toFixed(2)} (top 25%) และรายได้ ≤ {formatNumber(Math.round(scatterQuadrants.p25Rev))} บาท (bottom 25%)
+                คะแนน Digital Maturity สูงกว่าที่เส้นแนวโน้มคาดไว้ เมื่อเทียบกับธุรกิจที่มีรายได้ระดับใกล้เคียงกัน
               </div>
               <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 6 }}>
                 {formatNumber(scatterQuadrants.highMaturityLowRev.length)} บริษัท
@@ -1376,7 +1432,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               <div style={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
                 {scatterQuadrants.highMaturityLowRev.slice(0, 3).map((d, i) => (
                   <div key={i} style={{ fontSize: 11.5, color: '#5B4A42' }}>
-                    <b>{d.name}</b> — {formatNumber(Math.round(d.revenue))} บาท, {d.score.toFixed(2)}
+                    <b>{d.name}</b> — {formatNumber(Math.round(d.revenue))} บาท, คะแนน {d.score.toFixed(2)} (สูงกว่าที่คาด {d.residual.toFixed(2)} แต้ม)
                   </div>
                 ))}
               </div>
