@@ -1736,6 +1736,25 @@ export default function HotelDMRadarDashboard() {
     }
   };
 
+  // Multi-select for the chip-style SlicerGroup filters (province, industry,
+  // size). These start in an "all selected" state where every chip is
+  // technically selected but shown visually as if none are — clicking a chip
+  // from that state needs to ISOLATE to just that chip (what the person sees
+  // and expects), not silently remove one item from a huge selected set.
+  // After that first narrowing click, further clicks behave as normal
+  // add/remove multi-select.
+  const toggleChipMulti = (setFn, current, val, allOptions) => {
+    const isAll = current.length === allOptions.length;
+    if (isAll) {
+      setFn([val]);
+    } else if (current.includes(val)) {
+      if (current.length === 1) return;
+      setFn(current.filter((x) => x !== val));
+    } else {
+      setFn([...current, val]);
+    }
+  };
+
   const transStyle = effectiveTransition
     ? (TRANSITION_COLORS[effectiveTransition] || TRANSITION_COLORS['Digital Follower'])
     : TRANSITION_COLORS['Digital Follower'];
@@ -1834,9 +1853,9 @@ export default function HotelDMRadarDashboard() {
         </div>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '16px 28px', marginBottom: 14 }}>
-          <SlicerGroup title="จังหวัด" options={ALL_PROVINCES} selected={provinceSel} onToggle={(v) => toggleIsolate(setProvinceSel, provinceSel, v, ALL_PROVINCES)} onShowAll={() => setProvinceSel(ALL_PROVINCES)} counts={provinceCounts} />
-          <SlicerGroup title="อุตสาหกรรมหมวดใหญ่" options={uniq(RAW_DATA.map((d) => d.tsic1))} selected={tsic1Sel} onToggle={(v) => toggleIsolate(setTsic1Sel, tsic1Sel, v, uniq(RAW_DATA.map((d) => d.tsic1)))} onShowAll={() => setTsic1Sel(uniq(RAW_DATA.map((d) => d.tsic1)))} counts={tsic1Counts} />
-          <SlicerGroup title="ขนาดธุรกิจ" options={uniq(RAW_DATA.map((d) => d.size))} selected={sizeSel} onToggle={(v) => toggleIsolate(setSizeSel, sizeSel, v, uniq(RAW_DATA.map((d) => d.size)))} onShowAll={() => setSizeSel(uniq(RAW_DATA.map((d) => d.size)))} counts={sizeCounts} />
+          <SlicerGroup title="จังหวัด" options={ALL_PROVINCES} selected={provinceSel} onToggle={(v) => toggleChipMulti(setProvinceSel, provinceSel, v, ALL_PROVINCES)} onShowAll={() => setProvinceSel(ALL_PROVINCES)} counts={provinceCounts} />
+          <SlicerGroup title="อุตสาหกรรมหมวดใหญ่" options={uniq(RAW_DATA.map((d) => d.tsic1))} selected={tsic1Sel} onToggle={(v) => toggleChipMulti(setTsic1Sel, tsic1Sel, v, uniq(RAW_DATA.map((d) => d.tsic1)))} onShowAll={() => setTsic1Sel(uniq(RAW_DATA.map((d) => d.tsic1)))} counts={tsic1Counts} />
+          <SlicerGroup title="ขนาดธุรกิจ" options={uniq(RAW_DATA.map((d) => d.size))} selected={sizeSel} onToggle={(v) => toggleChipMulti(setSizeSel, sizeSel, v, uniq(RAW_DATA.map((d) => d.size)))} onShowAll={() => setSizeSel(uniq(RAW_DATA.map((d) => d.size)))} counts={sizeCounts} />
           <SlicerGroup title="โครงการ SMEs Growth Roadshow" options={ROADSHOW_OPTIONS} selected={roadshowSel} onToggle={(v) => toggleIsolate(setRoadshowSel, roadshowSel, v, ROADSHOW_OPTIONS)} onShowAll={() => setRoadshowSel(ROADSHOW_OPTIONS)} counts={roadshowCounts} />
         </div>
 
