@@ -1219,7 +1219,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         {/* AI-style insight, 1-2 sentences, changes with filter — leads with
             the correlation finding itself rather than undercutting it */}
         <div style={{ fontSize: 12.5, color: '#5B4A42', lineHeight: 1.7, marginBottom: 16, padding: '10px 14px', background: '#FFF6F2', borderRadius: 10 }}>
-          รายได้มีความสัมพันธ์กับ Digital Maturity{scatterRLabel} แต่ไม่ใช่ปัจจัยเดียวที่อธิบายความแตกต่าง
+          รายได้มีความสัมพันธ์กับ Digital Maturity {scatterRLabel} แต่ไม่ใช่ปัจจัยเดียวที่อธิบายความแตกต่าง
           {scatterInsight && (
             <> ในกลุ่มธุรกิจที่มีรายได้อยู่ในช่วงเดียวกัน ({formatNumber(Math.round(scatterInsight.minRev))}–{formatNumber(Math.round(scatterInsight.maxRev))} บาท) ยังพบคะแนน Digital Maturity แตกต่างกันสูงสุดถึง <b>{scatterInsight.range.toFixed(2)} แต้ม</b></>
           )}
