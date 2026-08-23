@@ -162,6 +162,59 @@ function Chip({ active, onClick, children, count }) {
   );
 }
 
+// Minimal line-icon set (hand-drawn SVG, no external icon library dependency)
+// used throughout the dashboard in place of colorful emoji, for a cleaner
+// single-tone aesthetic. Each takes size/color/style like a normal component.
+function Icon({ children, size = 14, color = 'currentColor', style }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color}
+      strokeWidth="2.3" strokeLinecap="round" strokeLinejoin="round"
+      style={{ flexShrink: 0, verticalAlign: 'middle', ...style }}>
+      {children}
+    </svg>
+  );
+}
+
+// Circular color-chip wrapper for icons — used for section headers and badges
+// (not for tiny repeated inline glyphs like list checkmarks, where a chip per
+// item would look cluttered rather than clean).
+function IconChip({ icon: IconComp, color, bg, size = 26, iconSize = 14, style }) {
+  return (
+    <span style={{
+      display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+      width: size, height: size, borderRadius: 999, background: bg, flexShrink: 0,
+      verticalAlign: 'middle', ...style,
+    }}>
+      <IconComp size={iconSize} color={color} />
+    </span>
+  );
+}
+const IconTarget = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.2" fill={p.color || 'currentColor'} stroke="none"/></Icon>;
+const IconTrophy = (p) => <Icon {...p}><path d="M8 21h8M12 17v4M6 4h12v3a6 6 0 0 1-12 0V4Z"/><path d="M6 5H4a2 2 0 0 0 2 4M18 5h2a2 2 0 0 1-2 4"/></Icon>;
+const IconStar = (p) => <Icon {...p}><path d="M12 3l2.6 5.9 6.4.6-4.8 4.3 1.4 6.3L12 17l-5.6 3.1 1.4-6.3-4.8-4.3 6.4-.6L12 3Z"/></Icon>;
+const IconBarChart = (p) => <Icon {...p}><path d="M4 20V10M12 20V4M20 20v-7"/></Icon>;
+const IconTrendUp = (p) => <Icon {...p}><path d="M3 17l6-6 4 4 8-8"/><path d="M15 6h6v6"/></Icon>;
+const IconX = (p) => <Icon {...p}><path d="M6 6l12 12M18 6L6 18"/></Icon>;
+const IconHeart = (p) => <Icon {...p}><path d="M6.5 15c-2-1-3-3.4-2-6 1-2.7 4-3.6 6-2 .6.4 1 1 1 1s.4-.6 1-1c2-1.6 5-.7 6 2 1 2.6 0 5-2 6-1.6.9-5 2.5-5 2.5s-3.4-1.6-5-2.5Z"/></Icon>;
+const IconCheck = (p) => <Icon {...p}><path d="M5 13l4 4L19 7"/></Icon>;
+const IconCheckCircle = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.5 2.5L16 9.5"/></Icon>;
+const IconFactory = (p) => <Icon {...p}><path d="M4 21V9l8-5 8 5v12"/><path d="M9 21v-6h6v6M4 9h16"/></Icon>;
+const IconMap = (p) => <Icon {...p}><path d="M3 20V8l5-2 6 2 5-2v12l-5 2-6-2-5 2Z"/><path d="M8 6v12M14 8v12"/></Icon>;
+const IconWarning = (p) => <Icon {...p}><path d="M12 3L2 20h20L12 3Z"/><path d="M12 10v4M12 17h.01"/></Icon>;
+const IconArrowUpDown = (p) => <Icon {...p}><path d="M12 3v18M8 6l4-3 4 3M8 18l4 3 4-3"/></Icon>;
+const IconSearch = (p) => <Icon {...p}><circle cx="10.5" cy="10.5" r="6.5"/><path d="M20 20l-4.7-4.7"/></Icon>;
+const IconScale = (p) => <Icon {...p}><path d="M12 4v16M9 20h6M4 8h16M6 8L3 14a3 3 0 0 0 6 0L6 8ZM18 8l-3 6a3 3 0 0 0 6 0l-3-6Z"/></Icon>;
+const IconEqual = (p) => <Icon {...p}><path d="M4 9h16M4 15h16"/></Icon>;
+const IconTrendDown = (p) => <Icon {...p}><path d="M3 6l7 7 4-4 7 7"/><path d="M21 10v6h-6"/></Icon>;
+const IconFlag = (p) => <Icon {...p}><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 4H5"/></Icon>;
+const IconBuilding = (p) => <Icon {...p}><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></Icon>;
+const IconMoney = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="M9.5 15.5c.5 1 1.4 1.5 2.5 1.5 1.7 0 3-1 3-2.3 0-3-6-1.2-6-4.3 0-1.3 1.3-2.4 3-2.4 1.1 0 2 .5 2.5 1.5M12 6v1.5M12 16.5V18"/></Icon>;
+const IconTapUp = (p) => <Icon {...p}><path d="M12 19V6M6 11l6-6 6 6"/></Icon>;
+const IconDiamond = (p) => <Icon {...p} strokeLinejoin="round"><path d="M12 4l6 8-6 8-6-8Z"/></Icon>;
+const IconRocket = (p) => <Icon {...p}><path d="M12 3c3 2 4.5 5 4.5 8.5 0 2-1 3.5-1 3.5H8.5s-1-1.5-1-3.5C7.5 8 9 5 12 3Z"/><path d="M9 15l-2 5M15 15l2 5M10.3 18h3.4"/></Icon>;
+const IconArrowRight = (p) => <Icon {...p}><path d="M5 12h14M13 6l6 6-6 6"/></Icon>;
+const IconBuildingSmall = (p) => <Icon {...p}><path d="M4 21V4h11v17M15 8h5v13"/><path d="M7 8h.01M11 8h.01M7 12h.01M11 12h.01M7 16h.01M11 16h.01"/></Icon>;
+
 function SlicerGroup({ title, options, selected, onToggle, onShowAll, counts }) {
   const isAll = selected.length === options.length;
   return (
@@ -668,7 +721,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           display: 'flex', flexDirection: 'column',
         }}>
           <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>🏆</span> คะแนนเฉลี่ยรวมทั่วประเทศ
+            <IconChip icon={IconTrophy} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />คะแนนเฉลี่ยรวมทั่วประเทศ
           </div>
           <div style={{
             borderRadius: 12, padding: '20px 16px', textAlign: 'center',
@@ -714,7 +767,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
         }}>
           <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>📊</span> คะแนนเฉลี่ยรายมิติ ทั่วประเทศ
+            <IconChip icon={IconBarChart} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />คะแนนเฉลี่ยรายมิติ ทั่วประเทศ
           </div>
           <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 6 }}>
             <span style={{ display: 'inline-block', width: 16, height: 0, borderTop: '2.5px dashed #D6334A' }}></span>
@@ -756,7 +809,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
         }}>
           <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>📈</span> การกระจายตัวระดับ Digital Maturity ของผู้ประกอบการทั่วประเทศ
+            <IconChip icon={IconTrendUp} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />การกระจายตัวระดับ Digital Maturity ของผู้ประกอบการทั่วประเทศ
           </div>
           <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14 }}>
             จำนวนผู้ประกอบการในแต่ละระดับ จากทั้งหมด {formatNumber(natSource.n)} ราย
@@ -806,7 +859,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
         }}>
           <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-            <span>🏭</span> SMEs เทียบ Large
+            <IconChip icon={IconFactory} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />SMEs เทียบ Large
           </div>
           <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14 }}>
             คะแนนเฉลี่ย DM แยกตามขนาดธุรกิจ (SMEs = ย่อย/ย่อม/กลาง)
@@ -861,7 +914,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         position: 'relative',
       }}>
         <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span>🗺️</span> คะแนนเฉลี่ยรายภูมิภาค
+          <IconChip icon={IconMap} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />คะแนนเฉลี่ยรายภูมิภาค
         </div>
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14 }}>
           เอาเมาส์วางบนแต่ละภูมิภาคเพื่อดูรายละเอียด — ตัวกรองด้านล่างมีผลเฉพาะแผนที่นี้เท่านั้น ไม่กระทบกราฟอื่นด้านบน
@@ -913,7 +966,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                   border: '1px solid #E4D9CE', background: '#FFFFFF', color: '#8993BC', cursor: 'pointer',
                 }}
               >
-                ✕ ล้างตัวกรอง
+                <IconX size={11} style={{marginRight:3}} />ล้างตัวกรอง
               </button>
             </div>
           )}
@@ -926,7 +979,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           }}>
             {mapHasData
               ? <>กำลังดู: <b style={{ color: '#192594' }}>{mapIndustry === 'ALL' ? 'ทุกอุตสาหกรรม' : mapIndustry}</b> · <b style={{ color: '#192594' }}>{mapSize === 'ALL' ? 'ทุกขนาดธุรกิจ' : mapSize}</b> ({formatNumber(mapN)} บริษัท)</>
-              : <>⚠️ ข้อมูลกลุ่มนี้มีน้อยเกินไปในบางภูมิภาค กำลังแสดงข้อมูลทั้งหมดแทน</>}
+              : <><IconWarning size={13} color="#B7854A" style={{marginRight:4}} />ข้อมูลกลุ่มนี้มีน้อยเกินไปในบางภูมิภาค กำลังแสดงข้อมูลทั้งหมดแทน</>}
           </div>
         )}
 
@@ -984,7 +1037,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                 boxShadow: '0 4px 12px rgba(244,185,66,0.35)', fontSize: 12, fontWeight: 700,
                 color: '#8A6A1A', display: 'flex', alignItems: 'center', gap: 5, pointerEvents: 'none',
               }}>
-                🏆 {mapTop[0]} ({mapTop[1].overall.toFixed(2)})
+                <IconChip icon={IconTrophy} color="#8A6A1A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />{mapTop[0]} ({mapTop[1].overall.toFixed(2)})
               </div>
             )}
 
@@ -1062,17 +1115,17 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
             }}>
               <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap' }}>
                 <div>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}>↕️ ส่วนต่างภูมิภาค</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}><IconChip icon={IconArrowUpDown} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />ส่วนต่างภูมิภาค</div>
                   <div style={{ fontSize: 15, fontWeight: 800, color: '#242C4D' }}>{mapGap.toFixed(2)} แต้ม</div>
                   <div style={{ fontSize: 12, color: '#8993BC' }}>เฉลี่ยรวม {mapAvgOfShown.toFixed(2)}</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}>📊 ความสม่ำเสมอ</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}><IconChip icon={IconBarChart} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />ความสม่ำเสมอ</div>
                   <div style={{ fontSize: 15, fontWeight: 800, color: mapConsistencyColor }}>{mapConsistencyLabel}</div>
                   <div style={{ fontSize: 12, color: '#8993BC' }}>CV = {(mapCV * 100).toFixed(1)}%</div>
                 </div>
                 <div>
-                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}>🎯 มิติที่ควรโฟกัส</div>
+                  <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em' }}><IconChip icon={IconTarget} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />มิติที่ควรโฟกัส</div>
                   {(mapDimBest.avg - mapDimWorst.avg) < 0.1 ? (
                     <>
                       <div style={{ fontSize: 13.5, fontWeight: 700, color: '#242C4D' }}>ไม่มีมิติใดโดดเด่นชัดเจน</div>
@@ -1129,7 +1182,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               {mapHiddenStrengths.length > 0 && (
                 <div style={{ paddingTop: 12, borderTop: '1px dashed #E4D9CE' }}>
                   <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 6 }}>
-                    🔍 จุดเด่นเฉพาะด้าน
+                    <IconChip icon={IconSearch} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />จุดเด่นเฉพาะด้าน
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {mapHiddenStrengths.map((h) => (
@@ -1145,7 +1198,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               {mapImbalance && mapImbalance.spread >= 0.1 && (
                 <div style={{ paddingTop: 12, borderTop: '1px dashed #E4D9CE' }}>
                   <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 6 }}>
-                    ⚖️ ความไม่สมดุลภายในภูมิภาค
+                    <IconChip icon={IconScale} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />ความไม่สมดุลภายในภูมิภาค
                   </div>
                   <div style={{ fontSize: 12.5, color: '#5B4A42' }}>
                     <b style={{ color: '#192594' }}>{mapImbalance.name}</b> มีมิติ <b>{mapImbalance.maxLabel}</b> ({mapImbalance.maxVal.toFixed(2)}) สูงกว่ามิติ <b>{mapImbalance.minLabel}</b> ({mapImbalance.minVal.toFixed(2)}) ของตัวเองอยู่ {mapImbalance.spread.toFixed(2)} แต้ม — มากที่สุดในบรรดาภูมิภาคที่แสดงอยู่
@@ -1157,7 +1210,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               {(mapAllRoundLeader || mapAllRoundLaggard) && (
                 <div style={{ paddingTop: 12, borderTop: '1px dashed #E4D9CE' }}>
                   <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 6 }}>
-                    🎯 ผู้นำ/ตามหลังรอบด้าน
+                    <IconChip icon={IconTarget} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />ผู้นำ/ตามหลังรอบด้าน
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     {mapAllRoundLeader && (
@@ -1178,7 +1231,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               {mapMostConsistentDim && mapMostConsistentDim.spread < 0.1 && (
                 <div style={{ paddingTop: 12, borderTop: '1px dashed #E4D9CE' }}>
                   <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B7854A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 6 }}>
-                    🟰 มิติที่ใกล้เคียงกันทุกภูมิภาค
+                    <IconChip icon={IconEqual} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />มิติที่ใกล้เคียงกันทุกภูมิภาค
                   </div>
                   <div style={{ fontSize: 12.5, color: '#5B4A42' }}>
                     <b style={{ color: '#192594' }}>{mapMostConsistentDim.label}</b> มีคะแนนใกล้เคียงกันในทุกภูมิภาคที่แสดงอยู่ (ห่างกันไม่ถึง {mapMostConsistentDim.spread.toFixed(2)} แต้ม)
@@ -1197,7 +1250,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
       }}>
         <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <span>📉</span> รายได้ เทียบกับ คะแนน Digital Maturity
+          <IconChip icon={IconTrendDown} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />รายได้ เทียบกับ คะแนน Digital Maturity
         </div>
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 10 }}>
           แกน X เป็น log scale เนื่องจากรายได้กระจายกว้างมาก · สุ่มตัวอย่าง {formatNumber(SCATTER_DATA.points.length)} บริษัทจากทั่วประเทศเพื่อประสิทธิภาพการแสดงผล
@@ -1216,12 +1269,19 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           คำนวณจาก log₁₀(รายได้) เทียบกับคะแนน Digital Maturity — ฐานเดียวกับที่ใช้วาดเส้นแนวโน้มด้านล่าง จึงสอดคล้องกัน
         </div>
 
-        {/* AI-style insight, 1-2 sentences, changes with filter — leads with
-            the correlation finding itself rather than undercutting it */}
-        <div style={{ fontSize: 12.5, color: '#5B4A42', lineHeight: 1.7, marginBottom: 16, padding: '10px 14px', background: '#FFF6F2', borderRadius: 10 }}>
-          รายได้มีความสัมพันธ์กับ Digital Maturity {scatterRLabel} แต่ไม่ใช่ปัจจัยเดียวที่อธิบายความแตกต่าง
+        {/* AI-style insight — split into 2 distinct rows (correlation finding,
+            then the same-revenue-band spread finding) instead of one run-on
+            paragraph, since they're two separate points */}
+        <div style={{ marginBottom: 16, padding: '12px 14px', background: '#FFF6F2', borderRadius: 10, display: 'flex', flexDirection: 'column', gap: 10 }}>
+          <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12.5, color: '#5B4A42', lineHeight: 1.6 }}>
+            <IconChip icon={IconTrendUp} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginTop:1}} />
+            <span>รายได้มีความสัมพันธ์กับ Digital Maturity<b> {scatterRLabel}</b> แต่ไม่ใช่ปัจจัยเดียวที่อธิบายความแตกต่าง</span>
+          </div>
           {scatterInsight && (
-            <> ในกลุ่มธุรกิจที่มีรายได้อยู่ในช่วงเดียวกัน ({formatNumber(Math.round(scatterInsight.minRev))}–{formatNumber(Math.round(scatterInsight.maxRev))} บาท) ยังพบคะแนน Digital Maturity แตกต่างกันสูงสุดถึง <b>{scatterInsight.range.toFixed(2)} แต้ม</b></>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8, fontSize: 12.5, color: '#5B4A42', lineHeight: 1.6 }}>
+              <IconChip icon={IconSearch} color="#B7854A" bg="#FBF3E7" size={20} iconSize={11} style={{marginTop:1}} />
+              <span>ในกลุ่มธุรกิจที่มีรายได้อยู่ในช่วงเดียวกัน ({formatNumber(Math.round(scatterInsight.minRev))}–{formatNumber(Math.round(scatterInsight.maxRev))} บาท) ยังพบคะแนน Digital Maturity แตกต่างกันสูงสุดถึง <b>{scatterInsight.range.toFixed(2)} แต้ม</b></span>
+            </div>
           )}
         </div>
 
@@ -1345,7 +1405,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
               }}
               aria-label="ปิด"
             >
-              ✕
+              <IconX size={16} />
             </button>
             <div style={{ fontSize: 15, fontWeight: 800, color: '#192594', marginBottom: 10, paddingRight: 24 }}>
               {scatterSelected.name}
@@ -1374,11 +1434,11 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
             </div>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', paddingTop: 12, borderTop: '1px dashed #D9DEF0' }}>
               <div>
-                <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', textTransform: 'uppercase', letterSpacing: '0.03em' }}>💪 มิติสูงสุด</div>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', textTransform: 'uppercase', letterSpacing: '0.03em' }}><IconChip icon={IconTrendUp} color="#1E7A3E" bg="#EAF6EC" size={20} iconSize={11} style={{marginRight:6}} />มิติสูงสุด</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#242C4D' }}>{scatterSelectedDims.best.label} ({scatterSelectedDims.best.value.toFixed(2)})</div>
               </div>
               <div>
-                <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B23A4A', textTransform: 'uppercase', letterSpacing: '0.03em' }}>🎯 มิติต่ำสุด</div>
+                <div style={{ fontSize: 10.5, fontWeight: 700, color: '#B23A4A', textTransform: 'uppercase', letterSpacing: '0.03em' }}><IconChip icon={IconTarget} color="#B23A4A" bg="#FBEAEC" size={20} iconSize={11} style={{marginRight:6}} />มิติต่ำสุด</div>
                 <div style={{ fontSize: 13, fontWeight: 700, color: '#242C4D' }}>{scatterSelectedDims.worst.label} ({scatterSelectedDims.worst.value.toFixed(2)})</div>
               </div>
             </div>
@@ -1403,7 +1463,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           <div style={{ marginTop: 18, paddingTop: 16, borderTop: '1px dashed #E6E9F7', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 14 }}>
             <div style={{ background: '#FBEAEC', border: '1px solid #F0C9CE', borderRadius: 10, padding: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 4 }}>
-                🚩 High Revenue × Low Maturity
+                <IconChip icon={IconFlag} color="#B23A4A" bg="#FBEAEC" size={22} iconSize={12} style={{marginRight:7}} />High Revenue × Low Maturity
               </div>
               <div style={{ fontSize: 12, color: '#5B4A42', marginBottom: 8 }}>
                 รายได้อยู่ในกลุ่มสูง แต่คะแนน Digital Maturity ต่ำกว่าที่เส้นแนวโน้มคาดไว้อย่างชัดเจน
@@ -1421,7 +1481,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
             </div>
             <div style={{ background: '#EAF6EC', border: '1px solid #C9E9CF', borderRadius: 10, padding: 14 }}>
               <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', textTransform: 'uppercase', letterSpacing: '0.03em', marginBottom: 4 }}>
-                ⭐ Digital Overperformers
+                <IconChip icon={IconStar} color="#1E7A3E" bg="#EAF6EC" size={22} iconSize={12} style={{marginRight:7}} />Digital Overperformers
               </div>
               <div style={{ fontSize: 12, color: '#5B4A42', marginBottom: 8 }}>
                 คะแนน Digital Maturity สูงกว่าที่เส้นแนวโน้มคาดไว้ เมื่อเทียบกับธุรกิจที่มีรายได้ระดับใกล้เคียงกัน
@@ -1829,7 +1889,7 @@ export default function HotelDMRadarDashboard() {
               transition: 'all 0.15s ease',
             }}
           >
-            🏢 ภาพรายบริษัท
+            <IconBuildingSmall size={14} style={{marginRight:5, verticalAlign:'-2px'}} />ภาพรายบริษัท
           </button>
         </div>
       </div>
@@ -1906,7 +1966,7 @@ export default function HotelDMRadarDashboard() {
                 <span style={{ fontSize: 12, color: '#6C77A8' }}>{selectedCompany.province} · {selectedCompany.tsic2} · {selectedCompany.size}</span>
                 {selectedCompany.roadshow === 1 && (
                   <span style={{ fontSize: 11, fontWeight: 700, padding: '4px 10px', borderRadius: 999, background: '#E4E9FA', color: '#192594' }}>
-                    ★ SMEs Growth Roadshow
+                    <IconStar size={11} color="#192594" style={{marginRight:4}} />SMEs Growth Roadshow
                   </span>
                 )}
                 <span style={{ fontSize: 11.5, fontWeight: 700, padding: '5px 12px', borderRadius: 999, background: transStyle.bg, color: transStyle.text }}>
@@ -1923,7 +1983,7 @@ export default function HotelDMRadarDashboard() {
               background: 'linear-gradient(120deg, #EAF6EC, #F4FBF5)',
               border: '1.5px solid #B7E4C3',
             }}>
-              <span style={{ fontSize: 24 }}>💰</span>
+              <IconChip icon={IconMoney} color="#1E7A3E" bg="#EAF6EC" size={34} iconSize={19} />
               <div>
                 <div style={{ fontSize: 10.5, fontWeight: 700, color: '#3E9A5E', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                   รายได้ปี 2568
@@ -1940,7 +2000,7 @@ export default function HotelDMRadarDashboard() {
           <div style={{ background: '#FFFFFF', borderRadius: 14, padding: 60, textAlign: 'center', color: '#8993BC', border: '1px dashed #D9DEF0' }}>
             {filtered.length === 0
               ? 'ไม่มีบริษัทที่ตรงกับตัวกรองที่เลือก — ลองปรับตัวกรองใหม่'
-              : '👆 กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด'}
+              : <><IconTapUp size={15} style={{marginRight:5, verticalAlign:'-3px'}} />กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด</>}
           </div>
         ) : (
           <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
@@ -1993,7 +2053,7 @@ export default function HotelDMRadarDashboard() {
                   marginTop: 10, padding: '10px 14px', borderRadius: 10,
                   background: '#F4F5FB', fontSize: 12, color: '#42507A', display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
                 }}>
-                  <span style={{ fontSize: 15 }}>🏆</span>
+                  <IconChip icon={IconTrophy} color="#B7854A" bg="#FBF3E7" size={24} iconSize={13} />
                   <span>
                     คะแนนรวมอยู่อันดับ <b style={{ color: '#192594' }}>{peerRank.rank}</b> จาก <b style={{ color: '#192594' }}>{peerRank.total}</b> บริษัทในอุตสาหกรรมเดียวกัน
                     {' '}(<b style={{ color: '#192594' }}>Top {peerRank.topPercent}%</b>)
@@ -2014,7 +2074,9 @@ export default function HotelDMRadarDashboard() {
                       fontSize: 10.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2,
                       color: gapInsight.best.diff > 0 ? '#1E7A3E' : '#5B6472',
                     }}>
-                      {gapInsight.best.diff > 0 ? '💪 จุดแข็ง' : '🔹 ด้านที่ใกล้เคียง Peer ที่สุด'}
+                      {gapInsight.best.diff > 0
+                        ? <><IconChip icon={IconHeart} color="#1E7A3E" bg="#EAF6EC" size={20} iconSize={11} style={{marginRight:6}} />จุดแข็ง</>
+                        : <><IconChip icon={IconDiamond} color="#5B6472" bg="#F4F5FB" size={20} iconSize={10} style={{marginRight:6}} />ด้านที่ใกล้เคียง Peer ที่สุด</>}
                     </div>
                     <div style={{ fontSize: 12.5, color: '#242C4D', marginBottom: gapInsight.strengthActions.length ? 8 : 0 }}>
                       {gapInsight.best.diff > 0 ? (
@@ -2027,12 +2089,12 @@ export default function HotelDMRadarDashboard() {
                     </div>
                     {gapInsight.strengthActions.length > 0 && (
                       <div style={{ paddingTop: 8, borderTop: gapInsight.best.diff > 0 ? '1px dashed #C9E9CF' : '1px dashed #E6E9F7' }}>
-                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', marginBottom: 4 }}>
-                          🚀 ต่อยอดสู่ระดับที่สูงขึ้น
+                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', marginBottom: 4, display: 'flex', alignItems: 'center' }}>
+                          <IconChip icon={IconRocket} color="#1E7A3E" bg="#EAF6EC" size={20} iconSize={11} style={{marginRight:6}} />ต่อยอดสู่ระดับที่สูงขึ้น
                         </div>
                         {gapInsight.strengthActions.map((action, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#3A2A24', display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 3 }}>
-                            <span style={{ color: '#1E7A3E', flexShrink: 0 }}>✓</span>
+                            <IconCheck size={12} color="#1E7A3E" style={{marginTop:2}} />
                             <span>{action}</span>
                           </div>
                         ))}
@@ -2047,9 +2109,11 @@ export default function HotelDMRadarDashboard() {
                   }}>
                     <div style={{
                       fontSize: 10.5, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 2,
-                      color: gapInsight.hasGap ? '#B23A4A' : '#1E7A3E',
+                      color: gapInsight.hasGap ? '#B23A4A' : '#1E7A3E', display: 'flex', alignItems: 'center',
                     }}>
-                      {gapInsight.hasGap ? '🎯 ควรพัฒนาก่อน (Gap)' : '📈 มิตินำหน้าน้อยที่สุด (ยังสูงกว่า Peer)'}
+                      {gapInsight.hasGap
+                        ? <><IconChip icon={IconTarget} color="#B23A4A" bg="#FBEAEC" size={20} iconSize={11} style={{marginRight:6}} />ควรพัฒนาก่อน (Gap)</>
+                        : <><IconChip icon={IconTrendUp} color="#1E7A3E" bg="#EAF6EC" size={20} iconSize={11} style={{marginRight:6}} />มิตินำหน้าน้อยที่สุด (ยังสูงกว่า Peer)</>}
                     </div>
                     <div style={{ fontSize: 12.5, color: '#242C4D', marginBottom: gapInsight.priorityActions.length ? 8 : 0 }}>
                       {gapInsight.hasGap ? (
@@ -2062,12 +2126,13 @@ export default function HotelDMRadarDashboard() {
                     </div>
                     {gapInsight.priorityActions.length > 0 && (
                       <div style={{ paddingTop: 8, borderTop: gapInsight.hasGap ? '1px dashed #F0C9CE' : '1px dashed #C9E9CF' }}>
-                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#8A5A00', marginBottom: 4 }}>
-                          {gapInsight.hasGap ? '✅ Priority Action (เฉพาะบริษัทนี้)' : '✅ แนวทางพัฒนาต่อยอด (เฉพาะบริษัทนี้)'}
+                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#8A5A00', marginBottom: 4, display: 'flex', alignItems: 'center' }}>
+                          <IconChip icon={IconCheckCircle} color="#8A5A00" bg="#FBF3E7" size={20} iconSize={11} style={{marginRight:6}} />
+                          {gapInsight.hasGap ? 'Priority Action (เฉพาะบริษัทนี้)' : 'แนวทางพัฒนาต่อยอด (เฉพาะบริษัทนี้)'}
                         </div>
                         {gapInsight.priorityActions.map((action, i) => (
                           <div key={i} style={{ fontSize: 12, color: '#3A2A24', display: 'flex', alignItems: 'flex-start', gap: 6, marginBottom: 3 }}>
-                            <span style={{ color: '#1E7A3E', flexShrink: 0 }}>✓</span>
+                            <IconCheck size={12} color="#1E7A3E" style={{marginTop:2}} />
                             <span>{action}</span>
                           </div>
                         ))}
@@ -2287,9 +2352,9 @@ export default function HotelDMRadarDashboard() {
                       <div style={{
                         position: 'absolute', top: -10, left: 12, fontSize: 10.5, fontWeight: 800,
                         padding: '2px 10px', borderRadius: 999, background: '#E0663D', color: '#FFFFFF',
-                        letterSpacing: '0.02em',
+                        letterSpacing: '0.02em', display: 'flex', alignItems: 'center',
                       }}>
-                        🎯 PRIORITY
+                        <IconTarget size={10} color="#FFFFFF" style={{marginRight:3}} />PRIORITY
                       </div>
                     )}
                     <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -2306,8 +2371,8 @@ export default function HotelDMRadarDashboard() {
                     </div>
                     {nextLevel && (
                       <div style={{ paddingTop: 8, borderTop: '1px dashed #E6E9F7' }}>
-                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', marginBottom: 3 }}>
-                          🎯 ก้าวต่อไป: {nextLevel}
+                        <div style={{ fontSize: 10.5, fontWeight: 700, color: '#1E7A3E', marginBottom: 3, display: 'flex', alignItems: 'center' }}>
+                          <IconChip icon={IconArrowRight} color="#1E7A3E" bg="#EAF6EC" size={20} iconSize={11} style={{marginRight:6}} />ก้าวต่อไป: {nextLevel}
                         </div>
                         <div style={{ fontSize: 12, color: '#5B6472', lineHeight: 1.6 }}>
                           {LEVEL_DEFINITIONS[dim.key][nextLevel]}
