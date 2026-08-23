@@ -46,11 +46,14 @@ const SCORE_BOX_GRADIENTS = {
 
 // Score-range boundaries per Digital Maturity level (0-4 scale), derived from the
 // full ETDA SMEs Digital Maturity dataset (quartile cut points).
+// Matches levelFromScore's official ETDA boundaries exactly (score<=1.75 is
+// Novice, so the display range must show 1.75 as Novice's upper bound, not
+// Follower's lower bound).
 const LEVEL_RANGES = [
-  { label: 'Digital Novice',   range: '0.00 – 1.74' },
-  { label: 'Digital Follower', range: '1.75 – 2.49' },
-  { label: 'Digital Native',   range: '2.50 – 3.24' },
-  { label: 'Digital Champion', range: '3.25 – 4.00' },
+  { label: 'Digital Novice',   range: '0.00 – 1.75' },
+  { label: 'Digital Follower', range: '1.76 – 2.50' },
+  { label: 'Digital Native',   range: '2.51 – 3.25' },
+  { label: 'Digital Champion', range: '3.26 – 4.00' },
 ];
 
 const LEVEL_DEFINITIONS = {"overall": {"Digital Novice": "มีการเข้าถึง \"ความเป็นดิจิทัล\"ต่ำ ยังไม่พร้อมประยุกต์ใช้เทคโนโลยีในธุรกิจ หรือมีการใช้แล้วแต่เป็นการนำไปใช้เพื่อประกอบธุรกิจโดยทั่วไปเท่านั้น ยังไม่สามารถนำเทคโนโลยีไปใช้ให้เกิดมูลค่าเพิ่มในธุรกิจได้", "Digital Follower": "เข้าใจถึงประโยชน์และความจำเป็นที่จะต้องประยุกต์ใช้เทคโนโลยีสมัยใหม่ จึงมีความพยายามที่จะปรับธุรกิจให้ทันกับกระแสดิจิทัล แต่ยังไม่สามารถนำเทคโนโลยีมาใช้ในธุรกิจได้ครอบคลุมทั้งองค์กร หรือยังไม่เชื่อมโยงกันระหว่างแต่ละส่วนงานภายในองค์กร ทำให้จัดเก็บข้อมูลดิจิทัลได้ไม่ครบถ้วน ไม่สามารถนำมาวิเคราะห์เชิงลึกได้", "Digital Native": "เข้าใจประโยชน์ของการใช้เทคโนโลยีในธุรกิจเป็นอย่างดี และกำลังอยู่ในระหว่างการพัฒนาปรับปรุงและศึกษาเทคโนโลยีใหม่ๆ ในตลาด ที่เข้ากันได้กับเทคโนโลยีเดิมที่มีอยู่แล้ว ระบบงานหรือกระบวนการภายในองค์กรอาจจะยังมีความทับซ้อนอยู่บ้าง เช่นเดียวกับการจัดเก็บข้อมูลดิจิทัลที่อาจจะมีอยู่แต่กระจัดกระจายอยู่ในหลายส่วนงาน", "Digital Champion": "ถือเป็นผู้นำในการขับเคลื่อนด้านดิจิทัล เป็นองค์กรที่ใช้อุปกรณ์ / เครื่องมือดิจิทัลสนับสนุนระบบงานส่วนใหญ่ในองค์กร โดยคำนึงถึงความต่อเนื่องสอดคล้องของแต่ละระบบงาน มีการจัดเก็บข้อมูลดิจิทัลอย่างเป็นระบบและสามารถนำมาวิเคราะห์เพื่อสร้างโอกาสทางธุรกิจใหม่ๆ ได้"}, "strategy": {"Digital Novice": "ยังไม่เห็นความสำคัญของการนำเทคโนโลยีสมัยใหม่เข้ามาใช้ในธุรกิจ หรือเห็นความสำคัญแล้วแต่ยังไม่มีแผนการดำเนินการที่ชัดเจน", "Digital Follower": "เห็นความจำเป็นในการนำเทคโนโลยีเข้ามาใช้ในธุรกิจ โดยอาจมีความจำเป็นที่จะต้องก้าวทันคู่แข่งในอุตสาหกรรมเดียวกัน วิสัยทัศน์ด้านดิจิทัลอาจยังถูกจำกัดอยู่แค่ในวงผู้บริหารหรือเจ้าหน้าที่ระดับสูง", "Digital Native": "มีการอัปเดตความรู้เกี่ยวกับเทคโนโลยีสมัยใหม่อยู่เสมอ แต่ยังไม่ตัดสินใจดำเนินการ จนกว่าจะมั่นใจว่าจะนำมาใช้กับธุรกิจได้จริง และสามารถคาดการณ์ผลลัพธ์ที่จะได้ หรือเห็น Case Study จากธุรกิจอื่นๆ ก่อน", "Digital Champion": "มีแผนการดำเนินการด้านเทคโนโลยีระยะยาวของทุกส่วนงานในองค์กร และไม่กลัวต่อการทดลองนำเทคโนโลยีใหม่ๆ มาใช้ในธุรกิจ เป็นผู้นำเทรนด์ดิจิทัลในอุตสาหกรรมของตนเอง"}, "structure": {"Digital Novice": "ไม่ได้ให้ความสำคัญกับการใช้อุปกรณ์ / เครื่องมือดิจิทัลในธุรกิจ และไม่ได้การวางระบบ IT อย่างเป็นกิจจะลักษณะ พนักงานอาจไม่ได้รับการสนับสนุนด้านอุปกรณ์ IT พื้นฐาน เช่น คอมพิวเตอร์ สัญญาณอินเตอร์เน็ต", "Digital Follower": "มีระบบ IT ขั้นพื้นฐาน ทั้งฮาร์ดแวร์ ซอฟต์แวร์ และการซ่อมแซมขั้นพื้นฐาน รองรับการทำงานของพนักงานในทุกส่วนงาน", "Digital Native": "มีระบบและทีม IT ในการดูแลและจัดการอุปกรณ์ IT รวมถึงอุปกรณ์ดิจิทัลต่างๆ สามารถจัดหาซอฟต์แวร์หรืออุปกรณ์เฉพาะหรือขั้นสูงให้แก่พนักงานได้ หากมีความจำเป็นต้องใช้", "Digital Champion": "มีการวาง IT Architecture และอาจรวมไปถึงระบบ Data Management ซึ่งอาจบริหารจัดการหรือดูแลความปลอดภัยของระบบโดยทีมภายใน หรือ Outsource ก็ได้"}, "process": {"Digital Novice": "ยังใช้แรงงานคนในการดำเนินธุรกิจเป็นส่วนใหญ่ มีการใช้เทคโนโลยีพื้นฐานบ้าง หากเป็นเทคโนโลยีที่พบได้ทั่วไปในอุตสาหกรรม ข้อมูลส่วนใหญ่ในธุรกิจ ถูกจัดเก็บอยู่ในรูปแบบที่ไม่ใช่ดิจิทัล ทำให้ไม่สามารถนำข้อมูลไปวิเคราะห์เชิงลึกต่อได้", "Digital Follower": "แม้ว่าจะมีการใช้เทคโนโลยีแล้ว แต่ก็ยังอาศัยกำลังคนเป็นหลักในการดำเนินธุรกิจ ข้อมูลเกี่ยวกับธุรกิจบางส่วนถูกจัดเก็บในรูปแบบดิจิทัล แต่ไม่ได้มีการกำหนดแนวทางในการจัดเก็บที่ชัดเจน ทำให้ข้อมูลแต่ละชนิดอยู่ในรูปแบบไฟล์ต่างชนิด ยากต่อการสืบค้นหรือนำมาใช้วิเคราะห์ข้อมูลร่วมกันได้", "Digital Native": "เทคโนโลยีที่ใช้อยู่สามารถลดภาระงานให้กับพนักงานได้จริง มีการบันทึกข้อมูลดิจิทัลที่เกิดจากการดำเนินธุรกิจในรูปแบบดิจิทัล สามารถนำข้อมูลดังกล่าวมาจัดทำรายงานหรือวิเคราะห์คาดการณ์ทั่วไปได้ดี เช่น ต้นทุน กำลังการผลิต แนวโน้มยอดขาย", "Digital Champion": "สามารถนำเทคโนโลยีมาแทนที่แรงงานคนได้ จนสามารถลดการจ้างงานได้ นอกจากนี้การใช้เทคโนโลยีใน Process ส่วนใหญ่ของธุรกิจ ทำให้ธุรกิจมีข้อมูลดิจิทัลจำนวนมากในการนำมาวิเคราะห์ ส่งผลให้ธุรกิจสามารถปรับตัวได้เร็ว และสามารถตัดสินใจอ้างอิงจากผลการวิเคราะห์ข้อมูลได้ (Data-driven Decision Making)"}, "people": {"Digital Novice": "ไม่มีการพัฒนาความรู้ด้านเทคโนโลยีและดิจิทัลให้กับพนักงานหรือมีอย่างจำกัด ไม่ว่าจะกับพนักงานใหม่หรือพนักงานปัจจุบัน อาจส่งผลให้บุคลากรโดยรวมไม่มีความรู้ด้านเทคโนโลยีเพียงพอที่จะทำงานที่ได้รับมอบหมายได้ให้เสร็จลุล่วงได้อย่างมีประสิทธิภาพ", "Digital Follower": "มีความพยายามในการพัฒนาความรู้และทักษะด้านเทคโนโลยีและดิจิทัลให้กับพนักงาน เพื่อให้มั่นใจว่าพนักงานสามารถใช้เทคโนโลยีที่เกี่ยวข้องกับงานของตนเองได้เป็นอย่างดี พนักงานอาจมีความลำบากและต้องใช้เวลาในการปรับตัว เมื่อมีการเปลี่ยนแปลงด้านเทคโนโลยีในบริษัท", "Digital Native": "มีแผนงานพัฒนาความรู้ด้านเทคโนโลยีพื้นฐานให้แก่พนักงานทุกส่วนงาน พนักงานมีความรู้ความเข้าใจในเทคโนโลยีพื้นฐานเป็นอย่างดี สามารถแบ่งปันความรู้ให้กับพนักงานคนอื่นได้ พนักงานทุกส่วนงานทราบดีว่าธุรกิจให้ความสำคัญด้านเทคโนโลยี เพราะได้รับการสื่อสารอย่างสม่ำเสมอจากผู้บริหารหรือหน่วยงานที่เกี่ยวข้อง", "Digital Champion": "มีแผนงานพัฒนาความรู้ด้านเทคโนโลยีให้พนักงานทุกส่วนงานอย่างต่อเนื่อง พนักงานสามารถเลือกที่จะเรียนรู้ได้ด้วยตนเองหรือสามารถรับการฝึกฝนจากผู้เชี่ยวชาญโดยตรง พนักงานทุกส่วนงานและทุกระดับรับทราบเกี่ยวกับวิสัยทัศน์ด้านดิจิทัลของบริษัท และเข้าใจเป็นอย่างดีว่าตนเองสามารถแสดงความคิดเห็นหรือต่อยอดเกี่ยวกับการเปลี่ยนแปลงด้านดิจิทัลนี้ได้ (Digital Transformation)"}, "customer": {"Digital Novice": "ยังไม่มีการใช้ช่องทางออนไลน์ในการติดต่อสื่อสารกับลูกค้า ทั้งในส่วนการขายและหลังการขาย และในกรณีที่ลูกค้าติดต่อเข้ามาสอบถาม ธุรกิจไม่ได้มีการวางระบบบริหารจัดการอย่างเป็นกิจจะลักษณะในการตอบคำถามหรือแก้ปัญหาของลูกค้า แม้ว่าอาจจะมีการกำหนดเจ้าหน้าที่เฉพาะ สำหรับรับเรื่องของลูกค้าหรือไม่ก็ตาม", "Digital Follower": "เริ่มใช้ช่องทางออนไลน์ในการติดต่อกับลูกค้า ไม่ว่าจะเป็นส่วนก่อนการขาย การขาย หรือหลังการขาย และหากลูกค้าสอบถามเข้ามา ธุรกิจได้จัดให้มีเจ้าหน้าที่เฉพาะในการรับเรื่อง ประสานงาน และแก้ปัญหาให้ลูกค้า โดยเจ้าหน้าที่จะต้องดำเนินการตามขั้นตอนมาตรฐานที่บริษัทกำหนดไว้ เพื่อให้มั่นใจได้ว่าปัญหาของลูกค้าถูกแก้ไขอย่างรวดเร็วและถูกวิธี", "Digital Native": "มีช่องทางติดต่อสอบถามให้ลูกค้าครอบคลุมทั้งช่องทางออนไลน์และออฟไลน์ นอกจากนี้ อาจมีการเริ่มนำแชตบอตมาใช้ตอบคำถามลูกค้า ร่วมกับโปรแกรมจัดเก็บและบริหารจัดการลูกค้า (Customer Relationship Management Program) ซึ่งช่วยให้พนักงานสามารถติดตามเรื่องของลูกค้าได้ โดยไม่ตกหล่น", "Digital Champion": "มีช่องทางติดต่อสอบถามให้ลูกค้าครอบคลุมทั้งออนไลน์และออฟไลน์ และมีการใช้แชตบอตมาใช้ตอบคำถามลูกค้าได้เกือบทั้งหมด ช่วยลดภาระงานของเจ้าหน้าที่ลูกค้าสัมพันธ์ นอกจากนี้ ยังมีการใช้โปรแกรมจัดเก็บและบริหารจัดการลูกค้า (Customer Relationship Management Program) ซึ่งช่วยให้บริษัทสามารถเก็บข้อมูลส่วนตัวและข้อมูลการใช้บริการของลูกค้าในรูปแบบดิจิทัล และนำไปวิเคราะห์คุณภาพการให้บริการหรือวิเคราะห์หาโอกาสทางธุรกิจต่อได้"}};
@@ -106,10 +109,15 @@ const QUESTIONS_BY_DIM = {
 
 // Maps a 0-4 score to its Digital Maturity level label, using the same quartile
 // boundaries as LEVEL_RANGES (derived from the full ETDA dataset).
+// Matches the official ETDA classification formula exactly:
+// =IFS(score<=1.75,"Digital Novice", score<=2.5,"Digital Follower",
+//      score<=3.25,"Digital Native", score<=4,"Digital Champion")
+// Boundaries are INCLUSIVE on the lower level (<=), not exclusive (<) — a
+// score of exactly 2.50 is "Digital Follower", not "Digital Native".
 function levelFromScore(score) {
-  if (score < 1.75) return 'Digital Novice';
-  if (score < 2.50) return 'Digital Follower';
-  if (score < 3.25) return 'Digital Native';
+  if (score <= 1.75) return 'Digital Novice';
+  if (score <= 2.50) return 'Digital Follower';
+  if (score <= 3.25) return 'Digital Native';
   return 'Digital Champion';
 }
 
@@ -415,8 +423,10 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
   const levelOrder = ['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'];
   const activeLevelSizeBreakdown = natIncludeAI ? LEVEL_SIZE_BREAKDOWN.withAI : LEVEL_SIZE_BREAKDOWN.noAI;
   const sizeLabelMap = { 'ธุรกิจขนาดย่อย': 'ขนาดย่อย', 'ธุรกิจขนาดย่อม': 'ขนาดย่อม', 'ธุรกิจขนาดกลาง': 'ขนาดกลาง', 'ธุรกิจขนาดใหญ่': 'ขนาดใหญ่' };
+  const levelRangeMap = Object.fromEntries(LEVEL_RANGES.map((r) => [r.label, r.range]));
   const levelBarData = levelOrder.map((lvl) => ({
     level: lvl,
+    range: levelRangeMap[lvl],
     count: natLevelCounts[lvl] || 0,
     fill: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).dot,
     sizeBreakdown: Object.entries(activeLevelSizeBreakdown[lvl] || {}).map(([size, n]) => ({ label: sizeLabelMap[size] || size, n })),
@@ -836,10 +846,29 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
           <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14 }}>
             จำนวนผู้ประกอบการในแต่ละระดับ จากทั้งหมด {formatNumber(natSource.n)} ราย
           </div>
-          <ResponsiveContainer width="100%" height={270}>
+          <ResponsiveContainer width="100%" height={285}>
             <BarChart data={levelBarData} margin={{ top: 24, right: 10, left: 0, bottom: 0 }} barCategoryGap="28%">
               <CartesianGrid strokeDasharray="3 3" stroke="#EEF0FA" vertical={false} />
-              <XAxis dataKey="level" tick={{ fill: '#42507A', fontSize: 11.5, fontWeight: 600 }} axisLine={{ stroke: '#E6E9F7' }} tickLine={false} />
+              <XAxis
+                dataKey="level"
+                tick={(props) => {
+                  const { x, y, payload } = props;
+                  const item = levelBarData.find((d) => d.level === payload.value);
+                  return (
+                    <g transform={`translate(${x},${y})`}>
+                      <text x={0} y={0} dy={14} textAnchor="middle" fill="#42507A" fontSize={11.5} fontWeight={600}>
+                        {payload.value}
+                      </text>
+                      <text x={0} y={0} dy={29} textAnchor="middle" fill="#8993BC" fontSize={10} fontWeight={600}>
+                        [{item ? item.range : ''}]
+                      </text>
+                    </g>
+                  );
+                }}
+                height={44}
+                axisLine={{ stroke: '#E6E9F7' }}
+                tickLine={false}
+              />
               <YAxis tick={{ fill: '#B7BEDE', fontSize: 11 }} tickFormatter={(v) => formatNumber(v)} axisLine={false} tickLine={false} />
               <Tooltip
                 cursor={{ fill: 'rgba(25,37,148,0.04)' }}
