@@ -842,118 +842,6 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         </div>
       </div>
 
-      {/* Average score by industry — single full-width bar chart. Level
-          distribution (count + % of 100) is shown in the tooltip instead of
-          a separate chart, to keep this section less cluttered. */}
-      <div style={{
-        background: '#FFFFFF', borderRadius: 14, padding: 20,
-        boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7', position: 'relative',
-      }}>
-        <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
-          <IconChip icon={IconBarChart} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />คะแนนเฉลี่ย Digital Maturity แบ่งตามอุตสาหกรรม
-        </div>
-        {(() => {
-          const indAvgSource = natIncludeAI ? INDUSTRY_AVG : INDUSTRY_AVG_NOAI;
-          const indDistSource = natIncludeAI ? INDUSTRY_LEVEL_DIST : INDUSTRY_LEVEL_DIST_NOAI;
-          const distLevels = ['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'];
-          const indBarData = Object.entries(indAvgSource)
-            .map(([industry, d]) => ({
-              industry, score: d.avg, n: d.n,
-              level: levelFromScore(d.avg),
-              fill: (TRANSITION_COLORS[levelFromScore(d.avg)] || TRANSITION_COLORS['Digital Follower']).dot,
-              dist: distLevels.map((lvl) => {
-                const ld = indDistSource[industry];
-                return { level: lvl, count: ld ? ld.counts[lvl] : 0, pct: ld ? ld.pct[lvl] : 0 };
-              }),
-            }))
-            .sort((a, b) => b.score - a.score);
-          const indBarAvg = indBarData.reduce((acc, d) => acc + d.score, 0) / (indBarData.length || 1);
-          const indTop = indBarData[0];
-          return (
-            <>
-              <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ display: 'inline-block', width: 16, height: 0, borderTop: '2.5px dashed #D6334A' }}></span>
-                  เส้นประสีแดง = ค่าเฉลี่ยทุกอุตสาหกรรม ({indBarAvg.toFixed(2)}) · เอาเมาส์วางบนแท่งเพื่อดูสัดส่วนระดับ Digital Maturity ของอุตสาหกรรมนั้น
-                </span>
-                {['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'].map((lvl) => (
-                  <span key={lvl} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                    <span style={{ width: 9, height: 9, borderRadius: '50%', background: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).dot }}></span>
-                    {lvl}
-                  </span>
-                ))}
-              </div>
-              {indTop && (
-                <div style={{
-                  position: 'absolute', top: 18, right: 18, background: '#FFFFFF',
-                  border: '1.5px solid #F4B942', borderRadius: 16, padding: '10px 18px', maxWidth: 170,
-                  boxShadow: '0 4px 12px rgba(244,185,66,0.35)',
-                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, pointerEvents: 'none',
-                }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-                    <IconChip icon={IconTrophy} color="#8A6A1A" bg="#FBF3E7" size={18} iconSize={10} style={{flexShrink:0}} />
-                    <span style={{ fontSize: 10.5, fontWeight: 700, color: '#8A6A1A', textAlign: 'center', lineHeight: 1.3 }}>{indTop.industry}</span>
-                  </div>
-                  <div style={{ fontSize: 22, fontWeight: 800, color: '#192594' }}>{indTop.score.toFixed(2)}</div>
-                </div>
-              )}
-              <ResponsiveContainer width="100%" height={340}>
-                <ComposedChart data={indBarData} margin={{ top: 24, right: 10, left: -10, bottom: 60 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF0FA" vertical={false} />
-                  <XAxis
-                    dataKey="industry" interval={0} angle={-35} textAnchor="end" height={80}
-                    tick={{ fill: '#42507A', fontSize: 10 }} axisLine={{ stroke: '#E6E9F7' }} tickLine={false}
-                  />
-                  <YAxis domain={[0, 4]} tick={{ fill: '#B7BEDE', fontSize: 11 }} axisLine={false} tickLine={false} />
-                  <Tooltip
-                    cursor={{ fill: 'rgba(25,37,148,0.04)' }}
-                    content={({ active, payload }) => {
-                      if (!active || !payload || !payload.length) return null;
-                      const d = payload[0].payload;
-                      return (
-                        <div style={{
-                          background: '#FFFFFF', borderRadius: 10, border: '1px solid #E6E9F7',
-                          boxShadow: '0 8px 24px rgba(25,37,148,0.12)', padding: '10px 14px', fontSize: 12.5, minWidth: 220,
-                        }}>
-                          <div style={{ fontWeight: 800, color: '#192594', marginBottom: 4 }}>{d.industry}</div>
-                          <div style={{ color: '#42507A', marginBottom: 6 }}>
-                            คะแนนเฉลี่ย <b>{d.score.toFixed(2)}</b> / 4.00 · รวม {formatNumber(d.n)} ราย
-                          </div>
-                          <div style={{
-                            display: 'inline-block', fontSize: 10.5, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
-                            background: (TRANSITION_COLORS[d.level] || TRANSITION_COLORS['Digital Follower']).bg,
-                            color: (TRANSITION_COLORS[d.level] || TRANSITION_COLORS['Digital Follower']).text,
-                            marginBottom: 6,
-                          }}>
-                            {d.level}
-                          </div>
-                          <div style={{ paddingTop: 6, borderTop: '1px dashed #E6E9F7', display: 'flex', flexDirection: 'column', gap: 3 }}>
-                            {d.dist.map((lv) => (
-                              <div key={lv.level} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: '#5B6472' }}>
-                                <span style={{ width: 8, height: 8, borderRadius: 2, background: (TRANSITION_COLORS[lv.level] || TRANSITION_COLORS['Digital Follower']).dot, flexShrink: 0 }}></span>
-                                <span style={{ flex: 1 }}>{lv.level}</span>
-                                <b style={{ color: '#192594' }}>{formatNumber(lv.count)} ราย</b>
-                                <span style={{ color: '#8993BC' }}>({lv.pct}%)</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    }}
-                  />
-                  <Bar dataKey="score" radius={[6, 6, 0, 0]} maxBarSize={40} label={{ position: 'top', fill: '#192594', fontWeight: 700, fontSize: 11 }}>
-                    {indBarData.map((entry, i) => (
-                      <Cell key={i} fill={entry.fill} />
-                    ))}
-                  </Bar>
-                  <ReferenceLine y={indBarAvg} stroke="#D6334A" strokeWidth={2} strokeDasharray="6 4" />
-                </ComposedChart>
-              </ResponsiveContainer>
-            </>
-          );
-        })()}
-      </div>
-
       {/* Distribution bar chart + SMEs vs Large size comparison */}
       <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
         <div style={{
@@ -1074,6 +962,118 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
             </BarChart>
           </ResponsiveContainer>
         </div>
+      </div>
+
+      {/* Average score by industry — single full-width bar chart. Level
+          distribution (count + % of 100) is shown in the tooltip instead of
+          a separate chart, to keep this section less cluttered. */}
+      <div style={{
+        background: '#FFFFFF', borderRadius: 14, padding: 20,
+        boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7', position: 'relative',
+      }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <IconChip icon={IconBarChart} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />คะแนนเฉลี่ย Digital Maturity แบ่งตามอุตสาหกรรม
+        </div>
+        {(() => {
+          const indAvgSource = natIncludeAI ? INDUSTRY_AVG : INDUSTRY_AVG_NOAI;
+          const indDistSource = natIncludeAI ? INDUSTRY_LEVEL_DIST : INDUSTRY_LEVEL_DIST_NOAI;
+          const distLevels = ['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'];
+          const indBarData = Object.entries(indAvgSource)
+            .map(([industry, d]) => ({
+              industry, score: d.avg, n: d.n,
+              level: levelFromScore(d.avg),
+              fill: (TRANSITION_COLORS[levelFromScore(d.avg)] || TRANSITION_COLORS['Digital Follower']).dot,
+              dist: distLevels.map((lvl) => {
+                const ld = indDistSource[industry];
+                return { level: lvl, count: ld ? ld.counts[lvl] : 0, pct: ld ? ld.pct[lvl] : 0 };
+              }),
+            }))
+            .sort((a, b) => b.score - a.score);
+          const indBarAvg = indBarData.reduce((acc, d) => acc + d.score, 0) / (indBarData.length || 1);
+          const indTop = indBarData[0];
+          return (
+            <>
+              <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ display: 'inline-block', width: 16, height: 0, borderTop: '2.5px dashed #D6334A' }}></span>
+                  เส้นประสีแดง = ค่าเฉลี่ยทุกอุตสาหกรรม ({indBarAvg.toFixed(2)}) · เอาเมาส์วางบนแท่งเพื่อดูสัดส่วนระดับ Digital Maturity ของอุตสาหกรรมนั้น
+                </span>
+                {['Digital Novice', 'Digital Follower', 'Digital Native', 'Digital Champion'].map((lvl) => (
+                  <span key={lvl} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
+                    <span style={{ width: 9, height: 9, borderRadius: '50%', background: (TRANSITION_COLORS[lvl] || TRANSITION_COLORS['Digital Follower']).dot }}></span>
+                    {lvl}
+                  </span>
+                ))}
+              </div>
+              {indTop && (
+                <div style={{
+                  position: 'absolute', top: 18, right: 18, background: '#FFFFFF',
+                  border: '1.5px solid #F4B942', borderRadius: 16, padding: '10px 18px', maxWidth: 170,
+                  boxShadow: '0 4px 12px rgba(244,185,66,0.35)',
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2, pointerEvents: 'none',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                    <IconChip icon={IconTrophy} color="#8A6A1A" bg="#FBF3E7" size={18} iconSize={10} style={{flexShrink:0}} />
+                    <span style={{ fontSize: 10.5, fontWeight: 700, color: '#8A6A1A', textAlign: 'center', lineHeight: 1.3 }}>{indTop.industry}</span>
+                  </div>
+                  <div style={{ fontSize: 22, fontWeight: 800, color: '#192594' }}>{indTop.score.toFixed(2)}</div>
+                </div>
+              )}
+              <ResponsiveContainer width="100%" height={340}>
+                <ComposedChart data={indBarData} margin={{ top: 24, right: 10, left: -10, bottom: 60 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#EEF0FA" vertical={false} />
+                  <XAxis
+                    dataKey="industry" interval={0} angle={-35} textAnchor="end" height={80}
+                    tick={{ fill: '#42507A', fontSize: 10 }} axisLine={{ stroke: '#E6E9F7' }} tickLine={false}
+                  />
+                  <YAxis domain={[0, 4]} tick={{ fill: '#B7BEDE', fontSize: 11 }} axisLine={false} tickLine={false} />
+                  <Tooltip
+                    cursor={{ fill: 'rgba(25,37,148,0.04)' }}
+                    content={({ active, payload }) => {
+                      if (!active || !payload || !payload.length) return null;
+                      const d = payload[0].payload;
+                      return (
+                        <div style={{
+                          background: '#FFFFFF', borderRadius: 10, border: '1px solid #E6E9F7',
+                          boxShadow: '0 8px 24px rgba(25,37,148,0.12)', padding: '10px 14px', fontSize: 12.5, minWidth: 220,
+                        }}>
+                          <div style={{ fontWeight: 800, color: '#192594', marginBottom: 4 }}>{d.industry}</div>
+                          <div style={{ color: '#42507A', marginBottom: 6 }}>
+                            คะแนนเฉลี่ย <b>{d.score.toFixed(2)}</b> / 4.00 · รวม {formatNumber(d.n)} ราย
+                          </div>
+                          <div style={{
+                            display: 'inline-block', fontSize: 10.5, fontWeight: 700, padding: '2px 9px', borderRadius: 999,
+                            background: (TRANSITION_COLORS[d.level] || TRANSITION_COLORS['Digital Follower']).bg,
+                            color: (TRANSITION_COLORS[d.level] || TRANSITION_COLORS['Digital Follower']).text,
+                            marginBottom: 6,
+                          }}>
+                            {d.level}
+                          </div>
+                          <div style={{ paddingTop: 6, borderTop: '1px dashed #E6E9F7', display: 'flex', flexDirection: 'column', gap: 3 }}>
+                            {d.dist.map((lv) => (
+                              <div key={lv.level} style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11.5, color: '#5B6472' }}>
+                                <span style={{ width: 8, height: 8, borderRadius: 2, background: (TRANSITION_COLORS[lv.level] || TRANSITION_COLORS['Digital Follower']).dot, flexShrink: 0 }}></span>
+                                <span style={{ flex: 1 }}>{lv.level}</span>
+                                <b style={{ color: '#192594' }}>{formatNumber(lv.count)} ราย</b>
+                                <span style={{ color: '#8993BC' }}>({lv.pct}%)</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      );
+                    }}
+                  />
+                  <Bar dataKey="score" radius={[6, 6, 0, 0]} maxBarSize={40} label={{ position: 'top', fill: '#192594', fontWeight: 700, fontSize: 11 }}>
+                    {indBarData.map((entry, i) => (
+                      <Cell key={i} fill={entry.fill} />
+                    ))}
+                  </Bar>
+                  <ReferenceLine y={indBarAvg} stroke="#D6334A" strokeWidth={2} strokeDasharray="6 4" />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </>
+          );
+        })()}
       </div>
 
       {/* Thailand region map — built from real province boundaries (Wikimedia
