@@ -988,9 +988,9 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                 return { level: lvl, count: ld ? ld.counts[lvl] : 0, pct: ld ? ld.pct[lvl] : 0 };
               }),
             }))
-            .sort((a, b) => b.score - a.score);
+            .sort((a, b) => a.score - b.score);
           const indBarAvg = indBarData.reduce((acc, d) => acc + d.score, 0) / (indBarData.length || 1);
-          const indTop = indBarData[0];
+          const indTop = indBarData.length ? indBarData[indBarData.length - 1] : null;
           return (
             <>
               <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 14, display: 'flex', alignItems: 'center', gap: 14, flexWrap: 'wrap' }}>
