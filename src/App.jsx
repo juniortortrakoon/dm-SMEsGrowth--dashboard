@@ -358,6 +358,28 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
   const [scatterSize, setScatterSize] = useState('ALL');
   const [scatterSelected, setScatterSelected] = useState(null);
 
+  // Measure the right column's (ranking list + summary card) actual rendered
+  // height so the map can be sized to match it exactly, instead of a fixed
+  // aspect-ratio box that leaves empty space when the summary content grows
+  // taller (e.g. more insight sections shown).
+  const mapRightColRef = useRef(null);
+  const [mapRightColHeight, setMapRightColHeight] = useState(null);
+  useEffect(() => {
+    const el = mapRightColRef.current;
+    if (!el || typeof ResizeObserver === 'undefined') return;
+    const ro = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setMapRightColHeight(entry.contentRect.height);
+      }
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  const MAP_ASPECT = 1051 / 1849;
+  const mapComputedWidth = mapRightColHeight
+    ? Math.max(240, Math.min(480, Math.round(mapRightColHeight * MAP_ASPECT)))
+    : null;
+
   // Applies to: overall score card, dimension bar chart, and distribution
   // chart — all three read from this single source so one toggle drives them.
   const natSource = natIncludeAI ? NATIONAL_OVERVIEW.national : NATIONAL_OVERVIEW_NOAI.national;
@@ -993,7 +1015,12 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         </div>
 
         <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap', alignItems: 'flex-start' }}>
-          <div style={{ position: 'relative', flex: '1 1 320px', maxWidth: 420 }}>
+          <div style={{
+            position: 'relative',
+            flex: mapComputedWidth ? '0 0 auto' : '1 1 320px',
+            width: mapComputedWidth ? mapComputedWidth : undefined,
+            maxWidth: 480,
+          }}>
             <div style={{ width: '100%', aspectRatio: '1051 / 1849' }}>
               <svg viewBox={MAP_VIEWBOX} width="100%" height="100%" style={{ display: 'block' }}>
                 <defs>
@@ -1070,7 +1097,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
 
           {/* Region ranking list, with the auto-generated summary stacked
               directly below it in the same column. */}
-          <div style={{ flex: '1 1 260px', minWidth: 260 }}>
+          <div ref={mapRightColRef} style={{ flex: '1 1 260px', minWidth: 260 }}>
             <div style={{ fontSize: 11, fontWeight: 700, color: '#8993BC', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: 10 }}>
               จัดอันดับภูมิภาค (คะแนนเฉลี่ย)
             </div>
