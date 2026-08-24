@@ -420,7 +420,7 @@ function interpolateColor(t) {
 function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
   const [mapIndustry, setMapIndustry] = useState('ALL');
   const [mapSize, setMapSize] = useState('ALL');
-  const [natIncludeAI, setNatIncludeAI] = useState(true);
+  const [natIncludeAI, setNatIncludeAI] = useState(false);
   const [scatterIndustry, setScatterIndustry] = useState('ALL');
   const [scatterSize, setScatterSize] = useState('ALL');
   const [scatterSelected, setScatterSelected] = useState(null);
@@ -2300,7 +2300,7 @@ export default function HotelDMRadarDashboard() {
   const [tsic2Sel, setTsic2Sel] = useState(uniq(RAW_DATA.map((d) => d.tsic2)));
   const [roadshowSel, setRoadshowSel] = useState(ROADSHOW_OPTIONS);
   const [selectedId, setSelectedId] = useState(null);
-  const [includeAI, setIncludeAI] = useState(true);
+  const [includeAI, setIncludeAI] = useState(false);
   const [activePage, setActivePage] = useState('national'); // 'company' | 'national'
   const [hoveredRegion, setHoveredRegion] = useState(null);
 
