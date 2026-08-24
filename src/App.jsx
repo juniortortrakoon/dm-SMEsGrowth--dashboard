@@ -390,6 +390,11 @@ const OVERALL_YOY = {
   y2569_noai: 2.32, y2569_withai: 2.26, pctChange6869_noai: -5.31, pctChange6869_withai: -5.83,
 };
 
+// 10-group industry scheme matching ETDA's official 2568 report (page 5),
+// used only for the 2568-2569 industry-level comparison on the trends page.
+const INDUSTRY_GROUP_2568 = {"MF": {"label": "การผลิต", "pct": {"Novice": 15.7, "Follower": 67.0, "Native": 11.6, "Champion": 5.7}}, "RW": {"label": "ขายส่ง/ขายปลีก ซ่อมยานยนต์", "pct": {"Novice": 0.0, "Follower": 80.9, "Native": 17.8, "Champion": 1.3}}, "TS": {"label": "ขนส่งและสถานที่เก็บสินค้า", "pct": {"Novice": 4.0, "Follower": 70.4, "Native": 22.9, "Champion": 2.7}}, "AR": {"label": "ที่พักแรมและบริการอาหาร", "pct": {"Novice": 0.0, "Follower": 73.0, "Native": 23.6, "Champion": 3.4}}, "IC": {"label": "ข้อมูลข่าวสารและการสื่อสาร", "pct": {"Novice": 2.3, "Follower": 47.2, "Native": 9.7, "Champion": 40.9}}, "FN": {"label": "การเงินและประกันภัย", "pct": {"Novice": 0.0, "Follower": 55.1, "Native": 26.5, "Champion": 18.4}}, "AE": {"label": "ศิลปะ บันเทิง นันทนาการ", "pct": {"Novice": 0.0, "Follower": 58.7, "Native": 34.9, "Champion": 6.3}}, "SV": {"label": "บริการด้านอื่นๆ", "pct": {"Novice": 29.2, "Follower": 35.4, "Native": 29.2, "Champion": 6.3}}, "HS": {"label": "สุขภาพและสังคมสงเคราะห์", "pct": {"Novice": 12.7, "Follower": 60.3, "Native": 20.6, "Champion": 6.3}}, "OT": {"label": "อุตสาหกรรมอื่นๆ", "pct": {"Novice": 7.0, "Follower": 58.6, "Native": 24.7, "Champion": 9.7}}};
+const INDUSTRY_GROUP_2569 = {"MF": {"label": "การผลิต", "pct": {"Novice": 32.6, "Follower": 29.6, "Native": 29.3, "Champion": 8.5}, "n": 1350}, "RW": {"label": "ขายส่ง/ขายปลีก ซ่อมยานยนต์", "pct": {"Novice": 20.7, "Follower": 46.2, "Native": 24.8, "Champion": 8.2}, "n": 2493}, "TS": {"label": "ขนส่งและสถานที่เก็บสินค้า", "pct": {"Novice": 21.5, "Follower": 31.5, "Native": 38.2, "Champion": 8.9}, "n": 550}, "AR": {"label": "ที่พักแรมและบริการอาหาร", "pct": {"Novice": 0.7, "Follower": 35.4, "Native": 52.9, "Champion": 11.1}, "n": 461}, "IC": {"label": "ข้อมูลข่าวสารและการสื่อสาร", "pct": {"Novice": 1.8, "Follower": 9.7, "Native": 70.1, "Champion": 18.4}, "n": 452}, "FN": {"label": "การเงินและประกันภัย", "pct": {"Novice": 10.5, "Follower": 16.9, "Native": 32.4, "Champion": 40.2}, "n": 296}, "AE": {"label": "ศิลปะ บันเทิง นันทนาการ", "pct": {"Novice": 35.7, "Follower": 14.7, "Native": 37.1, "Champion": 12.6}, "n": 143}, "SV": {"label": "บริการด้านอื่นๆ", "pct": {"Novice": 38.5, "Follower": 23.7, "Native": 28.1, "Champion": 9.6}, "n": 135}, "HS": {"label": "สุขภาพและสังคมสงเคราะห์", "pct": {"Novice": 8.0, "Follower": 19.1, "Native": 52.5, "Champion": 20.4}, "n": 162}, "OT": {"label": "อุตสาหกรรมอื่นๆ", "pct": {"Novice": 29.5, "Follower": 34.1, "Native": 20.7, "Champion": 15.7}, "n": 3384}};
+
 const MAP_GRADIENT_STOPS = [
   { r: 0xE7, g: 0x6F, b: 0x51 }, // terracotta (lowest)
   { r: 0xF4, g: 0xA2, b: 0x61 }, // sandy orange
@@ -2102,6 +2107,58 @@ function TrendsPage() {
               </div>
             );
           })}
+        </div>
+      </div>
+
+      {/* Industry-level comparison 2568 vs 2569 — regrouped into ETDA's
+          official 10-group scheme (from the 2568 report) since 2569's own
+          18-category TSIC1 breakdown doesn't match that report's grouping.
+          Both years use the same "ไม่รวม AI" level classification. */}
+      <div style={{
+        background: '#FFFFFF', borderRadius: 14, padding: 20,
+        boxShadow: '0 1px 3px rgba(25,37,148,0.08)', border: '1px solid #E6E9F7',
+      }}>
+        <div style={{ fontSize: 17, fontWeight: 800, color: '#192594', marginBottom: 4, display: 'flex', alignItems: 'center', gap: 8 }}>
+          <IconChip icon={IconBarChart} color="#192594" bg="#E4E9FA" size={26} iconSize={14} style={{marginRight:8}} />สัดส่วนระดับต่ออุตสาหกรรม เปรียบเทียบปี 2568 กับ 2569
+        </div>
+        <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 16, lineHeight: 1.6 }}>
+          จัดกลุ่มอุตสาหกรรมใหม่ให้ตรงกับ 10 กลุ่มที่รายงานทางการปี 2568 ใช้ (ปกติข้อมูลปี 2569 ของแดชบอร์ดนี้แบ่งละเอียดกว่า 18 กลุ่ม) และใช้เกณฑ์ "ไม่รวม AI" ทั้งสองปีเพื่อเทียบฐานเดียวกัน
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {['MF','RW','TS','AR','IC','FN','AE','SV','HS','OT'].map((g) => {
+            const d68 = INDUSTRY_GROUP_2568[g];
+            const d69 = INDUSTRY_GROUP_2569[g];
+            const novDelta = Math.round((d69.pct.Novice - d68.pct.Novice) * 10) / 10;
+            const champDelta = Math.round((d69.pct.Champion - d68.pct.Champion) * 10) / 10;
+            const novWorse = novDelta > 0.5;
+            const novBetter = novDelta < -0.5;
+            return (
+              <div key={g} style={{ display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px dashed #E6E9F7', paddingBottom: 10, flexWrap: 'wrap' }}>
+                <div style={{ width: 160, flexShrink: 0, fontSize: 12.5, fontWeight: 700, color: '#242C4D' }}>
+                  {d68.label}
+                </div>
+                <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap', fontSize: 12 }}>
+                  <span style={{ color: '#5B6472' }}>
+                    Novice: {d68.pct.Novice}% → <b style={{ color: novWorse ? '#B23A4A' : (novBetter ? '#1E7A3E' : '#5B6472') }}>{d69.pct.Novice}%</b>
+                    {' '}
+                    <span style={{ color: novWorse ? '#B23A4A' : (novBetter ? '#1E7A3E' : '#B7BEDE'), fontWeight: 700 }}>
+                      ({novDelta > 0 ? '+' : ''}{novDelta})
+                    </span>
+                  </span>
+                  <span style={{ color: '#5B6472' }}>
+                    Champion: {d68.pct.Champion}% → <b style={{ color: champDelta >= 0.5 ? '#1E7A3E' : (champDelta <= -0.5 ? '#B23A4A' : '#5B6472') }}>{d69.pct.Champion}%</b>
+                    {' '}
+                    <span style={{ color: champDelta >= 0.5 ? '#1E7A3E' : (champDelta <= -0.5 ? '#B23A4A' : '#B7BEDE'), fontWeight: 700 }}>
+                      ({champDelta > 0 ? '+' : ''}{champDelta})
+                    </span>
+                  </span>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+        <div style={{ fontSize: 12, color: '#5B6472', lineHeight: 1.6, marginTop: 14, padding: '10px 14px', background: '#FBEAEC', borderRadius: 10 }}>
+          เกือบทุกกลุ่มอุตสาหกรรมมีสัดส่วน <b>Digital Novice เพิ่มขึ้น</b>จากปี 2568 ไปปี 2569 — สอดคล้องกับภาพรวมทั้งประเทศที่พลิกกลับมาสูงขึ้น มีเพียง <b>สุขภาพและสังคมสงเคราะห์ (HS)</b> ที่ดีขึ้น (Novice ลดลง) และ <b>ข้อมูลข่าวสารและการสื่อสาร (IC)</b> ที่แทบไม่เปลี่ยนแปลง
         </div>
       </div>
 
