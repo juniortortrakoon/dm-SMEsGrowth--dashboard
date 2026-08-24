@@ -1983,35 +1983,64 @@ function TrendsPage() {
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 18 }}>
           2567–2568: ETDA e-Commerce Survey 2568 (รายงานทางการ) · 2569: ข้อมูลของแดชบอร์ดนี้เอง
         </div>
-        <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#8993BC', marginBottom: 6 }}>2567 (5 มิติหลัก)</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2567.toFixed(2)}</div>
-            <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>Digital Follower</div>
+        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'stretch' }}>
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#B23A4A' }}></span>
+              ชุดข้อมูล — ไม่รวม AI
+            </div>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#8993BC', marginBottom: 6 }}>2567 (5 มิติหลัก)</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2567.toFixed(2)}</div>
+                <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>Digital Follower</div>
+              </div>
+              <IconArrowRight size={18} color="#B7BEDE" />
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', marginBottom: 6 }}>2568 (5 มิติหลัก)</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_5dim.toFixed(2)}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#1E7A3E', marginTop: 2 }}>+{OVERALL_YOY.pctChange6768}%</div>
+              </div>
+              <IconArrowRight size={18} color="#B7BEDE" />
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (5 มิติหลัก, ไม่รวม AI)</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_noai.toFixed(2)}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_noai}%</div>
+              </div>
+            </div>
           </div>
-          <IconArrowRight size={18} color="#B7BEDE" />
-          <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', marginBottom: 6 }}>2568 (5 มิติหลัก)</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_5dim.toFixed(2)}</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#1E7A3E', marginTop: 2 }}>+{OVERALL_YOY.pctChange6768}%</div>
+
+          <div style={{
+            width: 0, borderLeft: '2.5px dashed #D9BFAE', alignSelf: 'stretch', marginTop: 26,
+            position: 'relative', flexShrink: 0,
+          }}>
+            <span style={{
+              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
+              background: '#FFFFFF', border: '1.5px solid #D9BFAE', borderRadius: 999,
+              padding: '3px 10px', fontSize: 10.5, fontWeight: 700, color: '#B7854A', whiteSpace: 'nowrap',
+            }}>
+              คนละวิธีวัด AI
+            </span>
           </div>
-          <IconArrowRight size={18} color="#B7BEDE" />
-          <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (5 มิติหลัก, ไม่รวม AI)</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_noai.toFixed(2)}</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_noai}%</div>
-          </div>
-          <div style={{ width: 1, alignSelf: 'stretch', background: '#E6E9F7' }}></div>
-          <div style={{ textAlign: 'center', padding: '14px 20px', background: '#E4E9FA', borderRadius: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 6 }}>2568 (5 มิติหลัก + Data Analytics)</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_6dim.toFixed(2)}</div>
-            <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>มิติใหม่ปี 2568</div>
-          </div>
-          <IconArrowRight size={18} color="#B7BEDE" />
-          <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (รวม AI ในคำถาม)</div>
-            <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_withai.toFixed(2)}</div>
-            <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_withai}%</div>
+
+          <div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#192594' }}></span>
+              ชุดข้อมูล — รวม AI
+            </div>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#E4E9FA', borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 6 }}>2568 (5 มิติหลัก + Data Analytics)</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_6dim.toFixed(2)}</div>
+                <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>มิติใหม่ปี 2568</div>
+              </div>
+              <IconArrowRight size={18} color="#B7BEDE" />
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
+                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (รวม AI ในคำถาม)</div>
+                <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_withai.toFixed(2)}</div>
+                <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_withai}%</div>
+              </div>
+            </div>
           </div>
         </div>
         <div style={{ fontSize: 11, color: '#B7BEDE', marginTop: 12, lineHeight: 1.6 }}>
