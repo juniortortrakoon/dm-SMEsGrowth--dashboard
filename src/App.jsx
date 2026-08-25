@@ -1885,10 +1885,12 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                       <div>อุตสาหกรรม: <b>{d.industry}</b></div>
                       <div>ขนาดธุรกิจ: <b>{d.size}</b></div>
                       <div>ภูมิภาค: <b>{d.region}</b></div>
-                      <div style={{ paddingTop: 6, marginTop: 3, borderTop: '1px dashed #E6E9F7' }}>
-                        💪 มิติสูงสุด: <b>{best.label} ({best.value.toFixed(2)})</b>
+                      <div style={{ paddingTop: 6, marginTop: 3, borderTop: '1px dashed #E6E9F7', display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <IconTrendUp size={11} color="#1E7A3E" style={{flexShrink:0}} />มิติสูงสุด: <b>{best.label} ({best.value.toFixed(2)})</b>
                       </div>
-                      <div>🎯 มิติต่ำสุด: <b>{worst.label} ({worst.value.toFixed(2)})</b></div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                        <IconTarget size={11} color="#B23A4A" style={{flexShrink:0}} />มิติต่ำสุด: <b>{worst.label} ({worst.value.toFixed(2)})</b>
+                      </div>
                     </div>
                   </div>
                 );
@@ -1899,10 +1901,16 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                 <Cell key={i} fill={d.fill} />
               ))}
             </Scatter>
-            <Line
-              data={scatterTrendData} dataKey="trend" stroke="#3A3A9E" strokeOpacity={0.65} strokeWidth={2.5}
-              strokeDasharray="6 4" dot={false} legendType="none" isAnimationActive={false}
-            />
+            {scatterTrendData.length === 2 && (
+              <ReferenceLine
+                segment={[
+                  { x: scatterTrendData[0].revenue, y: scatterTrendData[0].trend },
+                  { x: scatterTrendData[1].revenue, y: scatterTrendData[1].trend },
+                ]}
+                stroke="#3A3A9E" strokeOpacity={0.65} strokeWidth={2.5} strokeDasharray="6 4"
+                ifOverflow="extendDomain"
+              />
+            )}
           </ScatterChart>
         </ResponsiveContainer>
 
