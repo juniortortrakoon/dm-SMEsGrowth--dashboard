@@ -2590,9 +2590,9 @@ export default function HotelDMRadarDashboard() {
           </div>
           <div>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: '#AEB8F0', textTransform: 'uppercase' }}>
-              {activePage === 'national' ? 'SMEs Digital Maturity · Thailand Overview'
-                : activePage === 'trends' ? 'SMEs Digital Maturity · Historical Trends'
-                : 'SMEs Digital Maturity · Southern Provinces'}
+              {activePage === 'national' ? 'Digital Maturity · Thailand Overview'
+                : activePage === 'trends' ? 'Digital Maturity · Historical Trends'
+                : 'Digital Maturity · Southern Provinces'}
             </div>
             <div style={{ fontSize: 23, fontWeight: 800, color: '#FFFFFF', marginTop: 4, letterSpacing: '0.01em' }}>
               {activePage === 'national'
