@@ -231,6 +231,7 @@ const IconDiamond = (p) => <Icon {...p} strokeLinejoin="round"><path d="M12 4l6 
 const IconRocket = (p) => <Icon {...p}><path d="M12 3c3 2 4.5 5 4.5 8.5 0 2-1 3.5-1 3.5H8.5s-1-1.5-1-3.5C7.5 8 9 5 12 3Z"/><path d="M9 15l-2 5M15 15l2 5M10.3 18h3.4"/></Icon>;
 const IconArrowRight = (p) => <Icon {...p}><path d="M5 12h14M13 6l6 6-6 6"/></Icon>;
 const IconBuildingSmall = (p) => <Icon {...p}><path d="M4 21V4h11v17M15 8h5v13"/><path d="M7 8h.01M11 8h.01M7 12h.01M11 12h.01M7 16h.01M11 16h.01"/></Icon>;
+const IconDocSearch = (p) => <Icon {...p}><path d="M6 3h7l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M13 3v4h4"/><path d="M8 12.5h4"/><path d="M8 15.5h2.2"/><circle cx="15.3" cy="16.3" r="2.5"/><path d="M17.1 18.1l2 2"/></Icon>;
 
 function SlicerGroup({ title, options, selected, onToggle, onShowAll, counts }) {
   const isAll = selected.length === options.length;
@@ -1311,7 +1312,20 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
                       );
                     }}
                   />
-                  <Scatter data={points} isAnimationActive={false} fillOpacity={0.8}>
+                  <Scatter
+                    data={points}
+                    isAnimationActive={false}
+                    shape={(props) => {
+                      const { cx, cy, fill } = props;
+                      return (
+                        <circle
+                          cx={cx} cy={cy} r={8}
+                          fill={fill} fillOpacity={1}
+                          stroke="#FFFFFF" strokeWidth={2}
+                        />
+                      );
+                    }}
+                  >
                     {points.map((entry, i) => (
                       <Cell key={i} fill={entry.fill} />
                     ))}
@@ -1981,27 +1995,30 @@ function TrendsPage() {
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 18 }}>
           2567–2568: ETDA e-Commerce Survey 2568 (รายงานทางการ) · 2569: ข้อมูลของแดชบอร์ดนี้เอง
         </div>
-        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'stretch' }}>
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#B23A4A' }}></span>
-              ชุดข้อมูล — ไม่รวม AI
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 800, color: '#42507A' }}>5 มิติหลัก</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginTop: 3, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#B23A4A' }}></span>
+                ไม่รวม AI
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#8993BC', marginBottom: 6 }}>2567 (5 มิติหลัก)</div>
+              <div style={{ textAlign: 'center', padding: '16px 22px', minWidth: 108, background: '#F4F5FB', borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#8993BC', marginBottom: 8 }}>2567</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2567.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>Digital Follower</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', marginBottom: 6 }}>2568 (5 มิติหลัก)</div>
+              <div style={{ textAlign: 'center', padding: '16px 22px', minWidth: 108, background: '#EAF6EC', borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#1E7A3E', marginBottom: 8 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_5dim.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#1E7A3E', marginTop: 2 }}>+{OVERALL_YOY.pctChange6768}%</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (5 มิติหลัก, ไม่รวม AI)</div>
+              <div style={{ textAlign: 'center', padding: '16px 22px', minWidth: 108, background: '#FBEAEC', borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#B23A4A', marginBottom: 8 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_noai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_noai}%</div>
               </div>
@@ -2009,32 +2026,35 @@ function TrendsPage() {
           </div>
 
           <div style={{
-            width: 0, borderLeft: '2.5px dashed #D9BFAE', alignSelf: 'stretch', marginTop: 26,
+            width: 0, borderLeft: '3px dashed #D9BFAE', alignSelf: 'stretch', marginTop: 30,
             position: 'relative', flexShrink: 0,
           }}>
             <span style={{
               position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              background: '#FFFFFF', border: '1.5px solid #D9BFAE', borderRadius: 999,
-              padding: '3px 10px', fontSize: 10.5, fontWeight: 700, color: '#B7854A', whiteSpace: 'nowrap',
+              background: '#FFF6F2', border: '1.5px solid #D9BFAE', borderRadius: 999, boxShadow: '0 2px 6px rgba(183,133,74,0.18)',
+              padding: '5px 12px', fontSize: 11, fontWeight: 800, color: '#8A6A1A', whiteSpace: 'nowrap', letterSpacing: '0.01em',
             }}>
-              คนละวิธีวัด AI
+              ⚠ คนละวิธีวัด AI
             </span>
           </div>
 
           <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#192594' }}></span>
-              ชุดข้อมูล — รวม AI
+            <div style={{ marginBottom: 12 }}>
+              <div style={{ fontSize: 13.5, fontWeight: 800, color: '#42507A' }}>5 มิติหลัก + Data Analytics + AI</div>
+              <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginTop: 3, display: 'flex', alignItems: 'center', gap: 5 }}>
+                <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#192594' }}></span>
+                รวม AI
+              </div>
             </div>
             <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#E4E9FA', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 6 }}>2568 (5 มิติหลัก + Data Analytics)</div>
+              <div style={{ textAlign: 'center', padding: '16px 22px', minWidth: 108, background: '#E4E9FA', borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#192594', marginBottom: 8 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_6dim.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>มิติใหม่ปี 2568</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (รวม AI ในคำถาม)</div>
+              <div style={{ textAlign: 'center', padding: '16px 22px', minWidth: 108, background: '#FBEAEC', borderRadius: 12 }}>
+                <div style={{ fontSize: 13, fontWeight: 800, color: '#B23A4A', marginBottom: 8 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_withai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_withai}%</div>
               </div>
@@ -2568,19 +2588,21 @@ export default function HotelDMRadarDashboard() {
       <div style={{
         background: 'linear-gradient(120deg, #0E1450 0%, #192594 55%, #2A3AB8 100%)',
         padding: '20px 28px',
-        position: 'relative',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         gap: 20,
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap',
         justifyContent: 'space-between',
       }}>
         <div style={{
           position: 'absolute', right: -40, top: -60, width: 220, height: 220,
           borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 70%)',
         }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'nowrap', flex: '1 1 auto', minWidth: 0 }}>
           <div style={{
             background: '#FFFFFF', borderRadius: 14, padding: '10px 16px',
             display: 'flex', alignItems: 'center', flexShrink: 0,
@@ -2588,7 +2610,7 @@ export default function HotelDMRadarDashboard() {
           }}>
             <img src={LOGO_SRC} alt="ETDA" style={{ height: 30, display: 'block' }} />
           </div>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: '#AEB8F0', textTransform: 'uppercase' }}>
               {activePage === 'national' ? 'Digital Maturity · Thailand Overview'
                 : activePage === 'trends' ? 'Digital Maturity · Historical Trends'
@@ -2750,11 +2772,28 @@ export default function HotelDMRadarDashboard() {
           )}
         </div>
 
-        {filtered.length === 0 || !selectedCompany ? (
+        {filtered.length === 0 ? (
           <div style={{ background: '#FFFFFF', borderRadius: 14, padding: 60, textAlign: 'center', color: '#8993BC', border: '1px dashed #D9DEF0' }}>
-            {filtered.length === 0
-              ? 'ไม่มีบริษัทที่ตรงกับตัวกรองที่เลือก — ลองปรับตัวกรองใหม่'
-              : <><IconTapUp size={15} style={{marginRight:5, verticalAlign:'-3px'}} />กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด</>}
+            ไม่มีบริษัทที่ตรงกับตัวกรองที่เลือก — ลองปรับตัวกรองใหม่
+          </div>
+        ) : !selectedCompany ? (
+          <div style={{
+            background: '#FFFFFF', borderRadius: 14, padding: '40px 24px',
+            border: '1px dashed #D9DEF0', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+          }}>
+            <div style={{
+              width: 60, height: 60, borderRadius: '50%', background: '#E4E9FA',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, flexShrink: 0,
+            }}>
+              <IconDocSearch size={28} color="#192594" />
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: '#42507A' }}>
+              กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด
+            </div>
+            <div style={{ fontSize: 12.5, color: '#8993BC', marginTop: 6, maxWidth: 420 }}>
+              เลือกตัวกรองหรือเลือกบริษัทเพื่อแสดงข้อมูล Digital Maturity Profile รายบริษัท
+            </div>
           </div>
         ) : (
           <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
