@@ -1995,7 +1995,7 @@ function TrendsPage() {
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 18 }}>
           2567–2568: ETDA e-Commerce Survey 2568 (รายงานทางการ) · 2569: ข้อมูลของแดชบอร์ดนี้เอง
         </div>
-        <div style={{ display: 'flex', gap: 32, flexWrap: 'wrap', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'stretch' }}>
           <div>
             <div style={{ marginBottom: 12 }}>
               <div style={{ fontSize: 13.5, fontWeight: 800, color: '#42507A' }}>5 มิติหลัก</div>
@@ -2025,17 +2025,18 @@ function TrendsPage() {
             </div>
           </div>
 
-          <div style={{
-            width: 0, borderLeft: '3px dashed #D9BFAE', alignSelf: 'stretch', marginTop: 30,
-            position: 'relative', flexShrink: 0,
-          }}>
-            <span style={{
+          <div style={{ width: 180, flexShrink: 0, alignSelf: 'stretch', marginTop: 30, position: 'relative' }}>
+            <div style={{
+              position: 'absolute', left: '50%', top: 0, bottom: 0, width: 0, borderLeft: '3px dashed #D9BFAE',
+            }} />
+            <div style={{
               position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              background: '#FFF6F2', border: '1.5px solid #D9BFAE', borderRadius: 999, boxShadow: '0 2px 6px rgba(183,133,74,0.18)',
-              padding: '5px 12px', fontSize: 11, fontWeight: 800, color: '#8A6A1A', whiteSpace: 'nowrap', letterSpacing: '0.01em',
+              background: '#FFF6F2', border: '1.5px solid #D9BFAE', borderRadius: 12, boxShadow: '0 2px 6px rgba(183,133,74,0.18)',
+              padding: '8px 14px', fontSize: 10.5, fontWeight: 800, color: '#8A6A1A', letterSpacing: '0.01em',
+              textAlign: 'center', lineHeight: 1.35, maxWidth: 152,
             }}>
-              ⚠ คนละวิธีวัด AI
-            </span>
+              เริ่มรวมคำถาม AI+Data Analytics
+            </div>
           </div>
 
           <div>
