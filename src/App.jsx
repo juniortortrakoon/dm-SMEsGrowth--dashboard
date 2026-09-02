@@ -1996,19 +1996,39 @@ function TrendsPage() {
               <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12, minWidth: 92 }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: '#8993BC', marginBottom: 6 }}>2567</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2567.toFixed(2)}</div>
-                <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>Digital Follower</div>
+                <div style={{
+                  display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, marginTop: 5,
+                  background: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2567)] || TRANSITION_COLORS['Digital Follower']).bg,
+                  color: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2567)] || TRANSITION_COLORS['Digital Follower']).text,
+                }}>
+                  {levelFromScore(OVERALL_YOY.y2567)}
+                </div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
               <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12, minWidth: 92 }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: '#1E7A3E', marginBottom: 6 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_5dim.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#1E7A3E', marginTop: 2 }}>+{OVERALL_YOY.pctChange6768}%</div>
+                <div style={{
+                  display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, marginTop: 5,
+                  background: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2568_5dim)] || TRANSITION_COLORS['Digital Follower']).bg,
+                  color: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2568_5dim)] || TRANSITION_COLORS['Digital Follower']).text,
+                }}>
+                  {levelFromScore(OVERALL_YOY.y2568_5dim)}
+                </div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
               <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12, minWidth: 92 }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: '#B23A4A', marginBottom: 6 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_noai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_noai}%</div>
+                <div style={{
+                  display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, marginTop: 5,
+                  background: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2569_noai)] || TRANSITION_COLORS['Digital Follower']).bg,
+                  color: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2569_noai)] || TRANSITION_COLORS['Digital Follower']).text,
+                }}>
+                  {levelFromScore(OVERALL_YOY.y2569_noai)}
+                </div>
               </div>
             </div>
           </div>
@@ -2043,12 +2063,26 @@ function TrendsPage() {
                 <div style={{ fontSize: 12, fontWeight: 800, color: '#192594', marginBottom: 6 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_6dim.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>มิติใหม่ปี 2568</div>
+                <div style={{
+                  display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, marginTop: 5,
+                  background: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2568_6dim)] || TRANSITION_COLORS['Digital Follower']).bg,
+                  color: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2568_6dim)] || TRANSITION_COLORS['Digital Follower']).text,
+                }}>
+                  {levelFromScore(OVERALL_YOY.y2568_6dim)}
+                </div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
               <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12, minWidth: 92 }}>
                 <div style={{ fontSize: 12, fontWeight: 800, color: '#B23A4A', marginBottom: 6 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_withai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_withai}%</div>
+                <div style={{
+                  display: 'inline-block', fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 999, marginTop: 5,
+                  background: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2569_withai)] || TRANSITION_COLORS['Digital Follower']).bg,
+                  color: (TRANSITION_COLORS[levelFromScore(OVERALL_YOY.y2569_withai)] || TRANSITION_COLORS['Digital Follower']).text,
+                }}>
+                  {levelFromScore(OVERALL_YOY.y2569_withai)}
+                </div>
               </div>
             </div>
           </div>
