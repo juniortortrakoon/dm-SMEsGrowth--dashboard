@@ -227,6 +227,7 @@ const IconFlag = (p) => <Icon {...p}><path d="M5 21V4"/><path d="M5 4h13l-3 4 3 
 const IconBuilding = (p) => <Icon {...p}><path d="M3 21V10l9-7 9 7v11"/><path d="M9 21v-6h6v6"/></Icon>;
 const IconMoney = (p) => <Icon {...p}><circle cx="12" cy="12" r="9"/><path d="M9.5 15.5c.5 1 1.4 1.5 2.5 1.5 1.7 0 3-1 3-2.3 0-3-6-1.2-6-4.3 0-1.3 1.3-2.4 3-2.4 1.1 0 2 .5 2.5 1.5M12 6v1.5M12 16.5V18"/></Icon>;
 const IconTapUp = (p) => <Icon {...p}><path d="M12 19V6M6 11l6-6 6 6"/></Icon>;
+const IconDocSearch = (p) => <Icon {...p}><path d="M6 3h7l4 4v13a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z"/><path d="M13 3v4h4"/><path d="M8 12.5h4"/><path d="M8 15.5h2.2"/><circle cx="15.3" cy="16.3" r="2.5"/><path d="M17.1 18.1l2 2"/></Icon>;
 const IconDiamond = (p) => <Icon {...p} strokeLinejoin="round"><path d="M12 4l6 8-6 8-6-8Z"/></Icon>;
 const IconRocket = (p) => <Icon {...p}><path d="M12 3c3 2 4.5 5 4.5 8.5 0 2-1 3.5-1 3.5H8.5s-1-1.5-1-3.5C7.5 8 9 5 12 3Z"/><path d="M9 15l-2 5M15 15l2 5M10.3 18h3.4"/></Icon>;
 const IconArrowRight = (p) => <Icon {...p}><path d="M5 12h14M13 6l6 6-6 6"/></Icon>;
@@ -772,7 +773,7 @@ function NationalOverviewPage({ hoveredRegion, setHoveredRegion }) {
         display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 10,
       }}>
         <div style={{ fontSize: 12.5, color: '#42507A', lineHeight: 1.6, flex: '1 1 480px' }}>
-          <b style={{ color: '#192594' }}>ตัวกรองคำถามด้าน AI</b> — ปีนี้มีการบูรณาการคำถามด้าน AI เข้าเป็นส่วนหนึ่งของการประเมิน Digital Maturity ในแต่ละมิติ ผู้ใช้งานสามารถเลือก "รวม AI" เพื่อดูคะแนนตามกรอบการประเมินปัจจุบัน หรือ "ไม่รวม AI" เพื่อตัดคำถามด้าน AI ออกจากการคำนวณ ทำให้สามารถเปรียบเทียบคะแนนกับปีก่อนบนฐานการประเมินที่ใกล้เคียงกันมากขึ้น — มีผลกับทุกกราฟในหน้านี้ รวมถึงแผนที่ภูมิภาคด้านล่างด้วย
+          <b style={{ color: '#192594' }}>ตัวกรองคำถามด้าน AI</b> — ปีนี้มีการบูรณาการคำถามด้าน AI และ Data Analytics เข้าเป็นส่วนหนึ่งของการประเมิน Digital Maturity ในแต่ละมิติ ผู้ใช้งานสามารถเลือก "รวม AI" เพื่อดูคะแนนตามกรอบการประเมินปัจจุบัน (5 มิติหลัก + Data Analytics + AI) หรือ "ไม่รวม AI" เพื่อตัดคำถามด้าน AI ออกจากการคำนวณ (5 มิติหลัก) ทำให้สามารถเปรียบเทียบคะแนนกับปีก่อนบนฐานการประเมินที่ใกล้เคียงกันมากขึ้น — มีผลกับทุกกราฟในหน้านี้ รวมถึงแผนที่ภูมิภาคด้านล่างด้วย
         </div>
         <div style={{ display: 'inline-flex', background: '#F4F5FB', borderRadius: 999, padding: 3, gap: 2 }}>
           <button
@@ -1981,27 +1982,31 @@ function TrendsPage() {
         <div style={{ fontSize: 11.5, color: '#8993BC', marginBottom: 18 }}>
           2567–2568: ETDA e-Commerce Survey 2568 (รายงานทางการ) · 2569: ข้อมูลของแดชบอร์ดนี้เอง
         </div>
-        <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'stretch' }}>
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#B23A4A' }}></span>
-              ชุดข้อมูล — ไม่รวม AI
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'stretch' }}>
+          <div style={{ flex: '1 1 auto' }}>
+            <div style={{
+              fontSize: 11, fontWeight: 700, color: '#42507A', textTransform: 'uppercase', letterSpacing: '0.04em',
+              textAlign: 'center', marginBottom: 14, paddingBottom: 10, borderBottom: '2px solid #FBEAEC',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#B23A4A', flexShrink: 0 }}></span>
+              5 มิติหลัก
             </div>
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#8993BC', marginBottom: 6 }}>2567 (5 มิติหลัก)</div>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#F4F5FB', borderRadius: 12, minWidth: 92 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#8993BC', marginBottom: 6 }}>2567</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2567.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>Digital Follower</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#1E7A3E', marginBottom: 6 }}>2568 (5 มิติหลัก)</div>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#EAF6EC', borderRadius: 12, minWidth: 92 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#1E7A3E', marginBottom: 6 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_5dim.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#1E7A3E', marginTop: 2 }}>+{OVERALL_YOY.pctChange6768}%</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (5 มิติหลัก, ไม่รวม AI)</div>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12, minWidth: 92 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#B23A4A', marginBottom: 6 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_noai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_noai}%</div>
               </div>
@@ -2009,32 +2014,39 @@ function TrendsPage() {
           </div>
 
           <div style={{
-            width: 0, borderLeft: '2.5px dashed #D9BFAE', alignSelf: 'stretch', marginTop: 26,
-            position: 'relative', flexShrink: 0,
+            width: 180, flexShrink: 0, alignSelf: 'stretch', marginTop: 32,
+            position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center',
           }}>
-            <span style={{
-              position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
-              background: '#FFFFFF', border: '1.5px solid #D9BFAE', borderRadius: 999,
-              padding: '3px 10px', fontSize: 10.5, fontWeight: 700, color: '#B7854A', whiteSpace: 'nowrap',
+            <div style={{
+              position: 'absolute', left: '50%', top: 0, bottom: 0, width: 0, borderLeft: '2.5px dashed #D9BFAE',
+            }} />
+            <div style={{
+              position: 'relative', background: '#FFFFFF', border: '1.5px solid #D9BFAE', borderRadius: 12,
+              padding: '8px 14px', fontSize: 10.5, fontWeight: 700, color: '#B7854A',
+              textAlign: 'center', lineHeight: 1.35, maxWidth: 152,
             }}>
-              คนละวิธีวัด AI
-            </span>
+              เริ่มรวมคำถาม AI+Data Analytics
+            </div>
           </div>
 
-          <div>
-            <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 8, display: 'flex', alignItems: 'center', gap: 5 }}>
-              <span style={{ width: 8, height: 8, borderRadius: '50%', background: '#192594' }}></span>
-              ชุดข้อมูล — รวม AI
+          <div style={{ flex: '1 1 auto' }}>
+            <div style={{
+              fontSize: 11, fontWeight: 700, color: '#42507A', textTransform: 'uppercase', letterSpacing: '0.04em',
+              textAlign: 'center', marginBottom: 14, paddingBottom: 10, borderBottom: '2px solid #E4E9FA',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+            }}>
+              <span style={{ width: 7, height: 7, borderRadius: '50%', background: '#192594', flexShrink: 0 }}></span>
+              5 มิติหลัก + Data Analytics + AI
             </div>
-            <div style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#E4E9FA', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#192594', marginBottom: 6 }}>2568 (5 มิติหลัก + Data Analytics)</div>
+            <div style={{ display: 'flex', gap: 14, alignItems: 'center', justifyContent: 'center' }}>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#E4E9FA', borderRadius: 12, minWidth: 92 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#192594', marginBottom: 6 }}>2568</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2568_6dim.toFixed(2)}</div>
                 <div style={{ fontSize: 11, color: '#8993BC', marginTop: 2 }}>มิติใหม่ปี 2568</div>
               </div>
               <IconArrowRight size={18} color="#B7BEDE" />
-              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12 }}>
-                <div style={{ fontSize: 11, fontWeight: 700, color: '#B23A4A', marginBottom: 6 }}>2569 (รวม AI ในคำถาม)</div>
+              <div style={{ textAlign: 'center', padding: '14px 20px', background: '#FBEAEC', borderRadius: 12, minWidth: 92 }}>
+                <div style={{ fontSize: 12, fontWeight: 800, color: '#B23A4A', marginBottom: 6 }}>2569</div>
                 <div style={{ fontSize: 28, fontWeight: 800, color: '#192594' }}>{OVERALL_YOY.y2569_withai.toFixed(2)}</div>
                 <div style={{ fontSize: 12, fontWeight: 700, color: '#B23A4A', marginTop: 2 }}>{OVERALL_YOY.pctChange6869_withai}%</div>
               </div>
@@ -2568,19 +2580,21 @@ export default function HotelDMRadarDashboard() {
       <div style={{
         background: 'linear-gradient(120deg, #0E1450 0%, #192594 55%, #2A3AB8 100%)',
         padding: '20px 28px',
-        position: 'relative',
+        position: 'sticky',
+        top: 0,
+        zIndex: 40,
         overflow: 'hidden',
         display: 'flex',
         alignItems: 'center',
         gap: 20,
-        flexWrap: 'wrap',
+        flexWrap: 'nowrap',
         justifyContent: 'space-between',
       }}>
         <div style={{
           position: 'absolute', right: -40, top: -60, width: 220, height: 220,
           borderRadius: '50%', background: 'radial-gradient(circle, rgba(255,255,255,0.10) 0%, rgba(255,255,255,0) 70%)',
         }} />
-        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'nowrap', flex: '1 1 auto', minWidth: 0 }}>
           <div style={{
             background: '#FFFFFF', borderRadius: 14, padding: '10px 16px',
             display: 'flex', alignItems: 'center', flexShrink: 0,
@@ -2588,7 +2602,7 @@ export default function HotelDMRadarDashboard() {
           }}>
             <img src={LOGO_SRC} alt="ETDA" style={{ height: 30, display: 'block' }} />
           </div>
-          <div>
+          <div style={{ minWidth: 0 }}>
             <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.14em', color: '#AEB8F0', textTransform: 'uppercase' }}>
               {activePage === 'national' ? 'Digital Maturity · Thailand Overview'
                 : activePage === 'trends' ? 'Digital Maturity · Historical Trends'
@@ -2750,11 +2764,28 @@ export default function HotelDMRadarDashboard() {
           )}
         </div>
 
-        {filtered.length === 0 || !selectedCompany ? (
+        {filtered.length === 0 ? (
           <div style={{ background: '#FFFFFF', borderRadius: 14, padding: 60, textAlign: 'center', color: '#8993BC', border: '1px dashed #D9DEF0' }}>
-            {filtered.length === 0
-              ? 'ไม่มีบริษัทที่ตรงกับตัวกรองที่เลือก — ลองปรับตัวกรองใหม่'
-              : <><IconTapUp size={15} style={{marginRight:5, verticalAlign:'-3px'}} />กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด</>}
+            ไม่มีบริษัทที่ตรงกับตัวกรองที่เลือก — ลองปรับตัวกรองใหม่
+          </div>
+        ) : !selectedCompany ? (
+          <div style={{
+            background: '#FFFFFF', borderRadius: 14, padding: '40px 24px',
+            border: '1px dashed #D9DEF0', display: 'flex', flexDirection: 'column',
+            alignItems: 'center', justifyContent: 'center', textAlign: 'center',
+          }}>
+            <div style={{
+              width: 60, height: 60, borderRadius: '50%', background: '#E4E9FA',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: 14, flexShrink: 0,
+            }}>
+              <IconDocSearch size={28} color="#192594" />
+            </div>
+            <div style={{ fontSize: 15, fontWeight: 800, color: '#42507A' }}>
+              กรุณาเลือกบริษัทจากรายการด้านบนเพื่อดูรายละเอียด
+            </div>
+            <div style={{ fontSize: 12.5, color: '#8993BC', marginTop: 6, maxWidth: 420 }}>
+              เลือกตัวกรองหรือเลือกบริษัทเพื่อแสดงข้อมูล Digital Maturity Profile รายบริษัท
+            </div>
           </div>
         ) : (
           <div style={{ display: 'flex', gap: 18, flexWrap: 'wrap' }}>
